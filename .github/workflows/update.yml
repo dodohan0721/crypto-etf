@@ -1,0 +1,103 @@
+name: 크립토 ETF 갱신
+
+# ──────────────────────────────────────────────────────────────────────────
+# GitHub 의 schedule 은 "최선을 다하지만 보장하지 않는" 방식이라
+# */15 같은 잦은 주기는 대부분 무시된다(테마보드 실측: 하루 28회 예상 → 실제 5회).
+# 그래서 크론은 하루 세 번만 쓰고, 실행된 작업 안에서 반복한다.
+#
+#   ETF 집계는 미국 장이 닫힌 뒤 한 번이면 된다.
+#   속보는 하루 종일 들어오므로 작업 안에서 20분마다 다시 긁는다.
+#
+#   07:00 시작 → 루프 → (13:00 새 작업이 이어받음) → 19:00 → 다음 날 07:00
+# ──────────────────────────────────────────────────────────────────────────
+on:
+  schedule:
+    - cron: "0 22 * * *"     # KST 07:00  미국 장 마감 뒤 — ETF 집계 + 속보 루프
+    - cron: "0 4 * * *"      # KST 13:00  오후 이어받기
+    - cron: "0 10 * * *"     # KST 19:00  저녁 이어받기
+  workflow_dispatch:
+    inputs:
+      interval:
+        description: "속보 갱신 간격(초)"
+        required: false
+        default: "1200"
+      hours:
+        description: "몇 시간 동안 돌릴지"
+        required: false
+        default: "5.5"
+
+# 새 작업이 뜨면 이전 작업을 끊고 이어받는다
+concurrency:
+  group: crypto-etf
+  cancel-in-progress: true
+
+permissions:
+  contents: write            # 순유입 이력을 저장소에 되돌려 커밋한다
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      TZ: Asia/Seoul
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 한투 토큰(24시간)과 속보 일별 캐시를 다음 실행에 물려준다.
+      # 토큰은 1분에 한 번만 발급되므로 이게 없으면 연속 실행이 막힌다.
+      - name: 캐시 복원
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: ce-cache-${{ github.run_id }}
+          restore-keys: ce-cache-
+
+      - name: ETF 집계 (하루 한 번이면 충분하다)
+        env:
+          KIS_APP_KEY:         ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET:      ${{ secrets.KIS_APP_SECRET }}
+          KIS_ENV:             real
+          ECOS_API_KEY:        ${{ secrets.ECOS_API_KEY }}
+        run: python3 build.py || echo "!! ETF 집계 실패 — 속보만 갱신하고 넘어간다"
+
+      - name: 순유입 이력 커밋
+        run: |
+          git config user.name  "crypto-etf bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A data .cache/shares .cache/news .cache/prices.json .cache/prdt_type.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "바뀐 게 없다 — 커밋 생략"
+          else
+            git commit -m "데이터 갱신 $(date '+%F %H:%M')"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
+      - name: 속보 반복 갱신 + 배포
+        env:
+          NAVER_CLIENT_ID:       ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET:   ${{ secrets.NAVER_CLIENT_SECRET }}
+          CLOUDFLARE_API_TOKEN:  ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          INTERVAL: ${{ github.event.inputs.interval || '1200' }}
+          HOURS:    ${{ github.event.inputs.hours    || '5.5' }}
+        run: |
+          END=$(( $(date +%s) + $(python3 -c "print(int(float('$HOURS')*3600))") ))
+          n=0
+          while : ; do
+            n=$((n+1))
+            echo "════════ ${n}회차  $(date '+%F %T') ════════"
+            python3 news.py || echo "!! 속보 수집 실패 — 이번 회차 건너뜀"
+
+            npx --yes wrangler@latest pages deploy web \
+              --project-name crypto-etf --branch main --commit-dirty=true \
+              || echo "!! 배포 실패 — 다음 회차에 다시 시도"
+
+            [ "$(date +%s)" -ge "$END" ] && { echo "${n}회 갱신하고 마칩니다"; break; }
+            echo "다음 갱신까지 ${INTERVAL}초 대기 …"
+            sleep "$INTERVAL"
+          done

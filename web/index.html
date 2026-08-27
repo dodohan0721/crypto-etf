@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ETF 자금흐름</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --surface-0:#f2f2f0; --surface-1:#fcfcfb; --surface-2:#ececea; --surface-3:#e2e2df;
+  --line:#dcdcd8; --line-soft:#e8e8e5;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7c7b76;
+  --btc:#eb6834; --eth:#2a78d6;
+  --good:#0f7a4f; --bad:#c5372c; --warn:#8a6100;
+  --grid:#e6e6e3;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px -16px rgba(0,0,0,.18);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --surface-0:#111110; --surface-1:#1a1a19; --surface-2:#232322; --surface-3:#2c2c2a;
+    --line:#33332f; --line-soft:#262624;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
+    --btc:#d95926; --eth:#3987e5;
+    --good:#3fae7c; --bad:#e26a5e; --warn:#c99a3c;
+    --grid:#2b2b29;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --surface-0:#111110; --surface-1:#1a1a19; --surface-2:#232322; --surface-3:#2c2c2a;
+  --line:#33332f; --line-soft:#262624;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
+  --btc:#d95926; --eth:#3987e5;
+  --good:#3fae7c; --bad:#e26a5e; --warn:#c99a3c;
+  --grid:#2b2b29;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 24px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface-0);color:var(--text-primary);
+  font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px 80px}
+
+/* 헤더 */
+header{border-bottom:1px solid var(--line);background:var(--surface-1);position:sticky;top:0;z-index:20}
+.hd{max-width:1140px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;
+  justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{font-weight:600;font-size:15px;letter-spacing:-.01em}
+.brand span{color:var(--text-muted);font-weight:400}
+.hd-meta{font-family:var(--mono);font-size:11px;color:var(--text-muted);letter-spacing:.03em}
+
+/* 시세 스트립 */
+.ticker{display:flex;gap:0;border-bottom:1px solid var(--line);background:var(--surface-1);overflow-x:auto}
+.ticker-in{max-width:1140px;margin:0 auto;padding:0 20px;display:flex;gap:28px;width:100%}
+.tk{padding:10px 0;display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.tk b{font-size:12px;font-weight:600;letter-spacing:.02em}
+.tk .p{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.tk .s{font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+
+h2{font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em}
+.sub{font-size:12px;color:var(--text-muted);margin:2px 0 0;font-weight:400}
+section{margin-top:26px}
+.sec-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+
+.card{background:var(--surface-1);border:1px solid var(--line);border-radius:10px;
+  padding:18px 20px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+
+/* 히어로 숫자 */
+.hero{font-family:var(--mono);font-size:clamp(30px,5vw,42px);font-weight:600;
+  letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+.hero.pos{color:var(--good)} .hero.neg{color:var(--bad)}
+.lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:6px}
+.unit{font-size:13px;color:var(--text-muted);margin-top:4px}
+
+/* 과거 수치 */
+.rows{display:flex;flex-direction:column;gap:0}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:13px}
+.row:last-child{border-bottom:0}
+.row .k{color:var(--text-secondary)}
+.row .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500}
+.v.pos{color:var(--good)} .v.neg{color:var(--bad)}
+
+/* 세그먼트 토글 */
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:7px;padding:2px;gap:2px}
+.seg button{appearance:none;border:0;background:transparent;color:var(--text-secondary);
+  font-family:var(--sans);font-size:12px;font-weight:500;padding:5px 11px;border-radius:5px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface-1);color:var(--text-primary);
+  box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg button:focus-visible{outline:2px solid var(--eth);outline-offset:1px}
+
+/* 범례 */
+.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--text-secondary)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* 차트 */
+.chart{position:relative}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--surface-1);border:1px solid var(--line);
+  border-radius:7px;padding:8px 10px;font-size:12px;box-shadow:var(--shadow);
+  opacity:0;transition:opacity .1s;z-index:10;min-width:130px}
+.tip.on{opacity:1}
+.tip .d{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);margin-bottom:4px}
+.tip .l{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+.tip .l b{font-family:var(--mono);font-weight:500}
+
+/* 표 */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface-1);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:660px}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);text-align:left;padding:10px 12px;background:var(--surface-2);
+  border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+th.n{text-align:right}
+th[aria-sort]:after{content:"";margin-left:5px}
+th[aria-sort="descending"]:after{content:"▾"} th[aria-sort="ascending"]:after{content:"▴"}
+td{padding:9px 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.tk2{font-family:var(--mono);font-weight:600}
+.dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:0}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;padding:1px 5px;border-radius:3px;
+  border:1px solid var(--line);color:var(--text-muted);background:var(--surface-2);margin-left:6px}
+.muted{color:var(--text-muted)}
+
+.note{background:var(--surface-2);border-left:3px solid var(--warn);padding:11px 14px;
+  border-radius:0 7px 7px 0;font-size:12.5px;color:var(--text-secondary)}
+footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--text-muted)}
+/* 속보 마커 — 차트와 뉴스를 잇는 지점 */
+.mk{cursor:pointer}
+.mk-dot{transition:r .12s}
+.mk:hover .mk-dot,.mk.on .mk-dot{r:6}
+.mk-hit{fill:transparent}
+.daypanel{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.daypanel .hd2{display:flex;align-items:baseline;justify-content:space-between;
+  gap:10px;margin-bottom:8px}
+.daypanel h4{margin:0;font-size:13.5px;font-weight:600}
+.daypanel .close{appearance:none;border:0;background:transparent;color:var(--text-muted);
+  font-size:12px;cursor:pointer;padding:2px 6px;border-radius:4px}
+.daypanel .close:hover{background:var(--surface-2);color:var(--text-primary)}
+.dayitem{display:grid;grid-template-columns:46px 1fr;gap:10px;padding:7px 0;
+  border-bottom:1px solid var(--line-soft);font-size:13px;align-items:start}
+.dayitem:last-child{border-bottom:0}
+.dayitem time{font-family:var(--mono);font-size:11px;color:var(--text-muted);padding-top:2px}
+.dayitem a{color:inherit;text-decoration:none}
+.dayitem a:hover{text-decoration:underline;text-underline-offset:2px}
+.dayitem.hot a{color:var(--btc);font-weight:600}
+.dayitem .src2{font-size:11px;color:var(--text-muted);margin-top:2px}
+.hint{font-size:11.5px;color:var(--text-muted);margin-top:8px}
+.chipday{appearance:none;font-family:var(--sans);font-size:12px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface-2);color:var(--text-secondary);
+  border-radius:999px;padding:4px 11px;display:inline-flex;align-items:center;gap:6px}
+.chipday:hover{border-color:var(--text-muted);color:var(--text-primary)}
+.chipday[aria-pressed="true"]{background:var(--btc);border-color:var(--btc);color:#fff}
+.chipday:focus-visible{outline:2px solid var(--eth);outline-offset:2px}
+.chipday i{font-style:normal;width:6px;height:6px;border-radius:50%;background:var(--btc)}
+.chipday[aria-pressed="true"] i{background:#fff}
+
+/* 뷰 전환 */
+.nav{display:inline-flex;gap:2px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:8px;padding:2px}
+.nav button{appearance:none;border:0;background:transparent;color:var(--text-secondary);
+  font-family:var(--sans);font-size:13px;font-weight:500;padding:6px 14px;border-radius:6px;cursor:pointer}
+.nav button[aria-pressed="true"]{background:var(--surface-1);color:var(--text-primary);
+  box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.nav button:focus-visible{outline:2px solid var(--eth);outline-offset:1px}
+
+/* 속보 피드 */
+.daybar{position:sticky;top:52px;z-index:5;background:var(--surface-0);
+  padding:14px 0 8px;font-size:12.5px;color:var(--text-muted);
+  border-bottom:1px solid var(--line-soft);margin-bottom:2px}
+.feed{display:flex;flex-direction:column}
+.ni{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:13px 2px;
+  border-bottom:1px solid var(--line-soft);align-items:start}
+.ni:last-child{border-bottom:0}
+.ni time{font-family:var(--mono);font-size:11.5px;color:var(--text-muted);
+  padding-top:2px;font-variant-numeric:tabular-nums}
+.ni.hot time{background:var(--btc);color:#fff;border-radius:4px;text-align:center;
+  padding:2px 0;font-weight:600}
+.ni h3{margin:0;font-size:14.5px;font-weight:500;line-height:1.45;letter-spacing:-.005em}
+.ni.hot h3{font-weight:600;color:var(--btc)}
+.ni h3 a{color:inherit;text-decoration:none}
+.ni h3 a:hover{text-decoration:underline;text-underline-offset:2px}
+.ni h3 a:focus-visible{outline:2px solid var(--eth);outline-offset:2px;border-radius:2px}
+.ni .meta{margin-top:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  font-size:11.5px;color:var(--text-muted)}
+.ni .src{font-weight:500}
+.coin{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:1px 5px;
+  border-radius:3px;border:1px solid var(--line)}
+.coin.BTC{color:var(--btc);border-color:color-mix(in srgb,var(--btc) 40%,transparent)}
+.coin.ETH{color:var(--eth);border-color:color-mix(in srgb,var(--eth) 40%,transparent)}
+.ext{opacity:.5}
+.hidden{display:none}
+@media (max-width:520px){
+  .ni{grid-template-columns:46px 1fr;gap:10px}
+  .ni h3{font-size:14px}
+}
+
+/* ── 손안의 화면 ────────────────────────────────────────
+   비디오 속 두 서비스가 다 세로 화면이었다. 여기서 안 읽히면 만든 의미가 없다. */
+section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려지지 않게 */
+@media (max-width:700px){
+  section{scroll-margin-top:64px}
+  /* 머리말이 두 줄이면 세로 화면의 12%를 먹는다. 한 줄로 줄인다. */
+  .hd{padding:9px 16px;gap:10px;flex-wrap:nowrap}
+  .brand{font-size:14px;white-space:nowrap}
+  .brand span{display:none}
+  .hd-meta{font-size:10px;letter-spacing:0;white-space:nowrap}
+  .nav button{padding:5px 11px;font-size:12.5px}
+  .sec-hd{flex-direction:column;align-items:flex-start;gap:10px}
+  .seg{flex-wrap:wrap}
+  /* 폰에서는 펀드명·상장주식수를 접는다. 티커와 규모가 먼저다. */
+  table{min-width:0}
+  #tbl th:nth-child(2), #tbl td:nth-child(2),
+  #tbl th:nth-child(5), #tbl td:nth-child(5),
+  #tbl th:nth-child(7), #tbl td:nth-child(7){display:none}
+  #tbl th, #tbl td{padding:9px 8px}
+  #tbl td:nth-child(3){max-width:88px;overflow:hidden;text-overflow:ellipsis}
+  .tag.mo{display:inline-block;margin-left:5px}
+  .tk2 .nm{display:block;font-family:var(--sans);font-weight:400;font-size:11px;
+    color:var(--text-muted);max-width:96px;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;margin-left:15px}
+  .ticker{-webkit-overflow-scrolling:touch}
+  .ticker-in{padding:0 16px;gap:20px}
+}
+@media (min-width:701px){ .tk2 .nm, .tag.mo{display:none} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="brand">ETF 자금흐름 <span>· 비트코인 &amp; 이더리움</span></div>
+    <div class="nav" id="nav">
+      <button data-v="dash" aria-pressed="true">대시보드</button>
+      <button data-v="news" aria-pressed="false">속보</button>
+    </div>
+    <div class="hd-meta" id="ts">불러오는 중…</div>
+  </div>
+</header>
+
+<div class="ticker"><div class="ticker-in" id="ticker"></div></div>
+
+<div class="wrap">
+<div id="view-dash">
+
+  <!-- ── 순유입 요약 ─────────────────────── -->
+  <section>
+    <div class="sec-hd">
+      <div><h2>ETF 순유입</h2><p class="sub" id="flow-sub"></p></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="lbl">최근 순유입</div>
+        <div class="hero" id="flow-hero">—</div>
+        <div class="unit" id="flow-unit"></div>
+      </div>
+      <div class="card">
+        <div class="lbl">기간 합계</div>
+        <div class="rows" id="flow-sums"></div>
+      </div>
+    </div>
+    <div id="flow-empty" style="margin-top:14px"></div>
+  </section>
+
+  <!-- ── 순유입 차트 ─────────────────────── -->
+  <section id="flow-chart-sec" hidden>
+    <div class="sec-hd">
+      <div><h2>순유입 추이</h2><p class="sub">일별 · 자산별 누적</p></div>
+      <div class="seg" id="flow-range">
+        <button data-v="30" aria-pressed="true">30일</button>
+        <button data-v="365" aria-pressed="false">1년</button>
+        <button data-v="0" aria-pressed="false">전체</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="legend" style="margin-bottom:12px">
+        <span><i style="background:var(--btc)"></i>비트코인</span>
+        <span><i style="background:var(--eth)"></i>이더리움</span>
+      </div>
+      <div class="chart"><svg id="flow-svg" viewBox="0 0 900 260" role="img"
+        aria-label="일별 ETF 순유입"></svg><div class="tip" id="flow-tip"></div></div>
+    </div>
+  </section>
+
+  <!-- ── AUM · 비중 ─────────────────────── -->
+  <section>
+    <div class="sec-hd"><div><h2>운용자산과 흡수 비중</h2>
+      <p class="sub">현물 ETF가 보유한 규모 · 코인 시가총액 대비</p></div></div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="lbl">총 AUM · 현물</div>
+        <div class="hero" id="aum-hero">—</div>
+        <div class="unit" id="aum-unit"></div>
+      </div>
+      <div class="card">
+        <div class="lbl">자산별 구성</div>
+        <div class="chart" style="margin-top:8px"><svg id="aum-svg" viewBox="0 0 300 96"
+          role="img" aria-label="자산별 AUM 구성"></svg></div>
+        <div class="rows" id="aum-rows" style="margin-top:6px"></div>
+      </div>
+      <div class="card">
+        <div class="lbl">시총 대비 비중</div>
+        <div class="rows" id="pct-rows" style="margin-top:4px"></div>
+        <div class="chart" style="margin-top:10px"><svg id="pct-svg" viewBox="0 0 300 70"
+          role="img" aria-label="시가총액 대비 ETF 비중"></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 가격 이력 ─────────────────────── -->
+  <section>
+    <div class="sec-hd">
+      <div><h2>펀드 가격 추이</h2><p class="sub" id="px-sub"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="seg" id="px-range">
+          <button data-v="30" aria-pressed="true">30일</button>
+          <button data-v="90" aria-pressed="false">90일</button>
+          <button data-v="0" aria-pressed="false">전체</button>
+        </div>
+        <div class="seg" id="px-pick"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart"><svg id="px-svg" viewBox="0 0 900 262" role="img"
+        aria-label="펀드 종가 추이와 그날의 속보"></svg><div class="tip" id="px-tip"></div></div>
+      <div id="px-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"></div>
+      <p class="hint" id="px-hint"></p>
+      <div class="daypanel" id="daypanel" hidden></div>
+    </div>
+  </section>
+
+  <!-- ── 펀드 테이블 ─────────────────────── -->
+  <section>
+    <div class="sec-hd">
+      <div><h2>펀드 목록</h2><p class="sub" id="tbl-sub"></p></div>
+      <div class="seg" id="tbl-filter">
+        <button data-v="all" aria-pressed="true">전체</button>
+        <button data-v="BTC" aria-pressed="false">비트코인</button>
+        <button data-v="ETH" aria-pressed="false">이더리움</button>
+      </div>
+    </div>
+    <div class="tw">
+      <table id="tbl">
+        <thead><tr>
+          <th data-k="ticker">티커</th>
+          <th data-k="name">펀드명</th>
+          <th data-k="issuer">발행사</th>
+          <th data-k="last" class="n">가격</th>
+          <th data-k="shares" class="n">상장주식수</th>
+          <th data-k="aum_usd" class="n" aria-sort="descending">AUM</th>
+          <th data-k="tvol" class="n">거래량</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:8px">거래량은 데이터 제공처의 종목별 커버리지가 고르지 않아
+      값이 없는 경우 <span class="muted">—</span> 로 표시합니다.</p>
+  </section>
+
+</div><!-- /view-dash -->
+
+<div id="view-news" class="hidden">
+  <section style="margin-top:20px">
+    <div class="sec-hd">
+      <div><h2>속보</h2><p class="sub" id="news-sub">불러오는 중…</p></div>
+      <div class="seg" id="news-filter">
+        <button data-v="all" aria-pressed="true">전체</button>
+        <button data-v="coin" aria-pressed="false">코인 속보</button>
+        <button data-v="econ" aria-pressed="false">경제 속보</button>
+      </div>
+    </div>
+    <div class="card" style="padding:4px 20px 12px">
+      <div class="feed" id="feed"></div>
+    </div>
+    <div class="note" style="margin-top:14px">
+      기사 <b>제목과 원문 링크</b>만 제공합니다. 본문과 요약은 저장하지도 표시하지도 않습니다 —
+      기사를 요약해 게재하는 것도 언론사 이용허락이 필요하기 때문입니다.
+      제목을 누르면 해당 언론사 원문으로 이동합니다.
+    </div>
+  </section>
+</div><!-- /view-news -->
+
+  <footer>
+    <div id="foot"></div>
+  </footer>
+</div>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const el = (t, a = {}) => { const n = document.createElementNS(NS, t);
+  for (const k in a) n.setAttribute(k, a[k]); return n; };
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// ── 숫자 표기 ─────────────────────────────────────────
+const usd = v => {
+  if (v == null || !isFinite(v)) return "—";
+  const a = Math.abs(v), s = v < 0 ? "−" : "";
+  if (a >= 1e9) return `${s}$${(a / 1e9).toFixed(2)}B`;
+  if (a >= 1e6) return `${s}$${(a / 1e6).toFixed(1)}M`;
+  if (a >= 1e3) return `${s}$${(a / 1e3).toFixed(1)}K`;
+  return `${s}$${a.toFixed(0)}`;
+};
+const signed = v => (v == null || !isFinite(v)) ? "—" : (v > 0 ? "+" : "") + usd(v).replace("−", "−");
+const num = (v, d = 0) => v == null ? "—" : v.toLocaleString("ko-KR",
+  { minimumFractionDigits: d, maximumFractionDigits: d });
+const ymd = d => `${d.slice(0,4)}.${d.slice(4,6)}.${d.slice(6,8)}`;
+const md  = d => `${+d.slice(4,6)}월 ${+d.slice(6,8)}일`;
+
+let D = null, PXPICK = null, PXRANGE = 30;
+
+// ══════════════════════════════════════════════════════
+fetch("./etf.json", { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(d => { D = d; render(); })
+  .catch(e => {
+    $("#ts").textContent = "데이터를 불러오지 못했습니다";
+    $("#flow-empty").innerHTML = `<div class="note"><b>etf.json 을 읽지 못했습니다.</b><br>
+      브라우저에서 파일을 직접 열면 보안 정책 때문에 막힙니다.
+      폴더에서 <code>python3 -m http.server 8000</code> 을 실행하고
+      <code>localhost:8000</code> 으로 여세요. (${e.message})</div>`;
+  });
+
+// ══════════════════════════════════════════════════════
+// 기준 시각: 폰에서는 "08-27 14:57", 넓으면 "기준 2026-08-27 14:57 KST"
+function setTs(ts) {
+  const n = $("#ts"); if (!n) return;
+  if (ts) n.dataset.full = ts;
+  const full = n.dataset.full; if (!full) return;
+  n.textContent = innerWidth <= 700
+    ? full.replace(/^\d{4}-/, "").replace(/\s*KST$/, "")
+    : `기준 ${full}`;
+}
+addEventListener("resize", () => setTs(), { passive: true });
+
+function render() {
+  setTs(D.ts);
+  if (D.stale_from) {
+    const d = D.stale_from;
+    const bar = document.createElement("div");
+    bar.className = "note";
+    bar.style.margin = "16px 0 0";
+    bar.innerHTML = `<b>오늘 조회가 실패해 ${d.slice(0,4)}.${d.slice(4,6)}.${d.slice(6,8)}
+      데이터를 보여주고 있습니다.</b> 아래 수치는 그날 기준입니다.`;
+    $("#view-dash").prepend(bar);
+  } else if (D.shares_from) {
+    const d = D.shares_from;
+    const bar = document.createElement("div");
+    bar.className = "note"; bar.style.margin = "16px 0 0";
+    bar.innerHTML = `가격은 오늘 종가지만, <b>${D.n_shares_from}개 종목의 상장주식수는
+      ${d.slice(0,4)}.${d.slice(4,6)}.${d.slice(6,8)} 기준</b>입니다.
+      데이터 제공처의 상품정보 조회가 응답하지 않아 직전 값을 씁니다 —
+      그래서 순유입은 이 종목들을 빼고 계산합니다.`;
+    $("#view-dash").prepend(bar);
+  } else if (D.px_from_close) {
+    const bar = document.createElement("div");
+    bar.className = "note";
+    bar.style.margin = "16px 0 0";
+    bar.innerHTML = `미국 장 시간이 아니라 <b>${D.px_from_close}개 종목은 최근 종가</b>로 계산했습니다.`;
+    $("#view-dash").prepend(bar);
+  }
+  drawTicker(); drawFlow(); drawAum(); drawPct(); drawPrice(); drawTable(); drawFoot();
+  addEventListener("resize", () => { drawFlowChart(); drawPriceChart(); }, { passive: true });
+}
+
+// ── 시세 스트립 ───────────────────────────────────────
+function drawTicker() {
+  const c = D.coins || {}, k = c.krw || {}, u = c.usd || {}, kp = c.kimchi_pct || {};
+  const out = [];
+  if (D.fx) out.push(`<div class="tk"><b>환율</b><span class="p">${num(D.fx.rate, 2)}</span>
+    <span class="s">원/달러 · ${ymd(D.fx.date)}</span></div>`);
+  for (const [sym, nm, col] of [["BTC", "비트코인", "--btc"], ["ETH", "이더리움", "--eth"]]) {
+    const kr = k[sym]?.price_krw, us = u[sym]?.price_usd, ki = kp[sym];
+    if (kr == null && us == null) continue;
+    out.push(`<div class="tk"><b style="color:var(${col})">${nm}</b>
+      <span class="p">${kr != null ? num(kr) + "원" : "—"}</span>
+      <span class="s">${us != null ? "$" + num(us, 2) : ""}${
+        ki != null ? " · 김프 " + (ki > 0 ? "+" : "") + ki.toFixed(2) + "%" : ""}</span></div>`);
+  }
+  $("#ticker").innerHTML = out.join("");
+}
+
+// ── 순유입 요약 ───────────────────────────────────────
+function drawFlow() {
+  const f = D.flows || {}, cov = D.coverage || {};
+  const days = cov.snapshot_days || 0;
+  $("#flow-sub").textContent = f.latest ? `${ymd(f.latest.date)} 기준` : `수집 ${days}일차`;
+
+  if (!f.latest) {
+    $("#flow-hero").textContent = "—";
+    $("#flow-unit").textContent = "";
+    $("#flow-empty").innerHTML = `<div class="note">
+      <b>순유입은 아직 산출 전입니다.</b> 순유입은 상장주식수의 <em>하루치 변화</em>로 계산하는데,
+      데이터 제공처가 과거 상장주식수를 주지 않아 수집을 시작한 날부터 쌓입니다.
+      현재 <b>${days}일치</b> — 하루만 더 모이면 첫 금액이 나옵니다.</div>`;
+    $("#flow-sums").innerHTML = ["week:지난 7일", "month:지난 30일", "quarter:최근 90일"]
+      .map(x => `<div class="row"><span class="k">${x.split(":")[1]}</span>
+        <span class="v muted">—</span></div>`).join("");
+    return;
+  }
+  const t = f.latest.total;
+  const h = $("#flow-hero");
+  h.textContent = signed(t);
+  h.className = "hero " + (t >= 0 ? "pos" : "neg");
+  $("#flow-unit").innerHTML =
+    `<span style="color:var(--btc)">●</span> 비트코인 ${signed(f.latest.BTC)}
+     &nbsp; <span style="color:var(--eth)">●</span> 이더리움 ${signed(f.latest.ETH)}`;
+  $("#flow-sums").innerHTML = [["week", "지난 7일"], ["month", "지난 30일"], ["quarter", "최근 90일"]]
+    .map(([k, lb]) => {
+      const v = f.sum?.[k];
+      return `<div class="row"><span class="k">${lb}</span>
+        <span class="v ${v == null ? "muted" : v >= 0 ? "pos" : "neg"}">${signed(v)}</span></div>`;
+    }).join("");
+  $("#flow-chart-sec").hidden = false;
+  drawFlowChart();
+}
+
+let FLOWRANGE = 30;
+$("#flow-range").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+  FLOWRANGE = +b.dataset.v; drawFlowChart();
+});
+
+function fitBox(svg, baseW, baseH, minW) {
+  // SVG 좌표계를 실제 픽셀 폭에 맞춘다.
+  // viewBox 900 짜리를 폭 350 인 폰에 그리면 font-size 10 이 화면에서 3.9px 이 된다 — 아무도 못 읽는다.
+  // 좌표계를 렌더 폭과 1:1 로 두면 10 은 어디서나 10px 이다.
+  const w = Math.round(svg.getBoundingClientRect().width) || baseW;
+  const W = Math.max(minW || 320, Math.min(baseW, w));
+  const narrow = W < 560;
+  const H = narrow ? Math.round(baseH * 1.15) : baseH;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  return [W, H, narrow];
+}
+
+function drawFlowChart() {
+  const svg = $("#flow-svg"); if (!svg || !D?.flows?.daily?.length) return;
+  let rows = D.flows.daily;
+  if (FLOWRANGE > 0) rows = rows.slice(-FLOWRANGE);
+  svg.innerHTML = "";
+  const [W, H, narrow] = fitBox(svg, 900, 260);
+  const mL = narrow ? 50 : 62, mR = 8, mT = 12, mB = 26;
+  const iw = W - mL - mR, ih = H - mT - mB;
+
+  const tot = rows.map(r => r.total);
+  let lo = Math.min(0, ...tot), hi = Math.max(0, ...tot);
+  if (hi === lo) hi = lo + 1;
+  const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
+  const y = v => mT + ih - (v - lo) / (hi - lo) * ih;
+  const bw = Math.max(2, Math.min(26, iw / rows.length * 0.62));
+  const x = i => mL + iw * (i + 0.5) / rows.length;
+
+  // 격자 + 0 기준선
+  const ticks = 4;
+  for (let i = 0; i <= ticks; i++) {
+    const v = lo + (hi - lo) * i / ticks, yy = y(v);
+    svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: yy, y2: yy,
+      stroke: cssv("--grid"), "stroke-width": 1 }));
+    const t = el("text", { x: mL - 8, y: yy + 4, "text-anchor": "end",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = usd(v); svg.appendChild(t);
+  }
+  const y0 = y(0);
+  svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: y0, y2: y0,
+    stroke: cssv("--text-muted"), "stroke-width": 1.5, opacity: .5 }));
+
+  // 막대 — 양수는 위로 쌓고 음수는 아래로 쌓는다
+  rows.forEach((r, i) => {
+    const cx = x(i);
+    let up = 0, dn = 0;
+    for (const [k, col] of [["BTC", "--btc"], ["ETH", "--eth"]]) {
+      const v = r[k] || 0; if (!v) continue;
+      const from = v > 0 ? up : dn, to = from + v;
+      const yA = y(from), yB = y(to);
+      const h = Math.abs(yB - yA);
+      svg.appendChild(el("rect", {
+        x: cx - bw / 2, y: Math.min(yA, yB), width: bw, height: Math.max(1, h - 2),
+        rx: Math.min(3, bw / 3), fill: cssv(col) }));
+      if (v > 0) up = to; else dn = to;
+    }
+  });
+
+  // 날짜 라벨 — 양 끝과 중간만
+  (narrow ? [0, rows.length - 1] : [0, Math.floor(rows.length / 2), rows.length - 1]).forEach((i, n, arr) => {
+    if (i < 0 || !rows[i] || (n && arr[n - 1] === i)) return;
+    const t = el("text", { x: x(i), y: H - 8, "text-anchor": "middle",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = md(rows[i].date); svg.appendChild(t);
+  });
+
+  // 호버
+  const tip = $("#flow-tip");
+  const hit = el("rect", { x: mL, y: mT, width: iw, height: ih, fill: "transparent" });
+  svg.appendChild(hit);
+  hit.addEventListener("pointermove", ev => {
+    const b = svg.getBoundingClientRect();
+    const px = (ev.clientX - b.left) / b.width * W;
+    const i = Math.max(0, Math.min(rows.length - 1,
+      Math.floor((px - mL) / iw * rows.length)));
+    const r = rows[i];
+    tip.innerHTML = `<div class="d">${ymd(r.date)}</div>
+      <div class="l"><span style="color:var(--btc)">비트코인</span><b>${signed(r.BTC)}</b></div>
+      <div class="l"><span style="color:var(--eth)">이더리움</span><b>${signed(r.ETH)}</b></div>
+      <div class="l" style="margin-top:3px;border-top:1px solid var(--line-soft);padding-top:3px">
+        <span>합계</span><b>${signed(r.total)}</b></div>`;
+    tip.classList.add("on");
+    tip.style.left = Math.min(b.width - 160, Math.max(0, (x(i) / W) * b.width - 70)) + "px";
+    tip.style.top = "6px";
+  });
+  hit.addEventListener("pointerleave", () => tip.classList.remove("on"));
+}
+</script>
+<script>
+"use strict";
+// ── AUM ───────────────────────────────────────────────
+function drawAum() {
+  const t = D.totals || {}, sp = t.aum_spot_usd || t.aum_usd || {};
+  $("#aum-hero").textContent = usd(sp.ALL);
+  $("#aum-hero").className = "hero";
+  const all = (t.aum_usd || {}).ALL;
+  $("#aum-unit").textContent = all && all !== sp.ALL
+    ? `선물·전략형 포함 시 ${usd(all)}` : "현물 ETF 기준";
+
+  const svg = $("#aum-svg"); svg.innerHTML = "";
+  const W = 300, H = 96, gap = 2;
+  const parts = [["BTC", sp.BTC || 0, "--btc", "비트코인"], ["ETH", sp.ETH || 0, "--eth", "이더리움"]];
+  const sum = parts.reduce((a, p) => a + p[1], 0) || 1;
+  let yy = 6;
+  parts.forEach(([k, v, col, nm]) => {
+    const h = Math.max(6, (v / sum) * (H - 12) - gap);
+    svg.appendChild(el("rect", { x: 0, y: yy, width: W, height: h, rx: 4, fill: cssv(col) }));
+    const label = el("text", { x: 10, y: yy + h / 2 + 4, fill: "#fff",
+      "font-size": 11, "font-weight": 600, "font-family": "var(--sans)" });
+    label.textContent = `${nm} ${(v / sum * 100).toFixed(1)}%`;
+    if (h > 18) svg.appendChild(label);
+    yy += h + gap;
+  });
+  $("#aum-rows").innerHTML = parts.map(([k, v, col, nm]) =>
+    `<div class="row"><span class="k"><i class="dot" style="background:var(${col})"></i>${nm}</span>
+     <span class="v">${usd(v)}</span></div>`).join("");
+}
+
+// ── 시총 대비 비중 ────────────────────────────────────
+function drawPct() {
+  const p = (D.totals || {}).pct_of_mcap || {};
+  const items = [["BTC", "비트코인", "--btc"], ["ETH", "이더리움", "--eth"],
+                 ["ALL", "전체", "--text-secondary"]];
+  $("#pct-rows").innerHTML = items.map(([k, nm, col]) => {
+    const v = p[k];
+    return `<div class="row"><span class="k"><i class="dot" style="background:var(${col})"></i>${nm}</span>
+      <span class="v">${v == null ? "—" : v.toFixed(2) + "%"}</span></div>`;
+  }).join("");
+
+  const svg = $("#pct-svg"); svg.innerHTML = "";
+  const W = 300, rows = items.filter(([k]) => p[k] != null);
+  const max = Math.max(8, ...rows.map(([k]) => p[k]));
+  rows.forEach(([k, nm, col], i) => {
+    const y = i * 22 + 6, w = (p[k] / max) * (W - 46);
+    svg.appendChild(el("rect", { x: 0, y, width: W - 46, height: 8, rx: 4,
+      fill: cssv("--surface-3") }));
+    svg.appendChild(el("rect", { x: 0, y, width: Math.max(3, w), height: 8, rx: 4,
+      fill: cssv(col) }));
+    const t = el("text", { x: W - 40, y: y + 8, fill: cssv("--text-secondary"),
+      "font-size": 10.5, "font-family": "var(--mono)" });
+    t.textContent = p[k].toFixed(2) + "%"; svg.appendChild(t);
+  });
+}
+
+// ── 가격 추이 ─────────────────────────────────────────
+function drawPrice() {
+  const px = D.prices || {}, funds = D.funds || [];
+  const top = funds.slice(0, 5).map(f => f.ticker).filter(t => px[t]);
+  if (!top.length) { $("#px-sub").textContent = "가격 이력이 없습니다"; return; }
+  PXPICK = PXPICK && top.includes(PXPICK) ? PXPICK : top[0];
+  $("#px-pick").innerHTML = top.map(t =>
+    `<button data-v="${t}" aria-pressed="${t === PXPICK}">${t}</button>`).join("");
+  $("#px-pick").onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    PXPICK = b.dataset.v;
+    [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+    drawPriceChart();
+  };
+  $("#px-range").onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    PXRANGE = +b.dataset.v;
+    [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+    drawPriceChart();
+  };
+  drawPriceChart();
+}
+
+function drawPriceChart() {
+  const svg = $("#px-svg"); if (!svg || !D) return;
+  const series = (D.prices || {})[PXPICK]; if (!series) return;
+  const allDays = Object.keys(series).sort();
+  // 속보는 최근 며칠치만 있는데 가격은 100일치다.
+  // 전체를 그리면 마커가 오른쪽 1%에 뭉개진다 — 기본값을 30일로 둔 이유.
+  const pxDays = PXRANGE > 0 ? allDays.slice(Math.max(0, allDays.length - PXRANGE)) : allDays;
+  // 종가는 미국 장 마감 뒤에 들어온다. 오늘 속보는 있는데 오늘 종가는 아직 없는 게 정상이다.
+  // 그 날을 축에서 빼 버리면 오늘 속보 마커가 갈 곳이 없어진다 — 그래서 뒤에 붙인다.
+  const tailNews = Object.keys(newsByDay()).filter(d => d > pxDays.at(-1)).sort();
+  const days = pxDays.concat(tailNews);
+  const vals = days.map(d => (typeof series[d] === "number" ? series[d] : null));
+  const fin = vals.map((v, i) => [v, i]).filter(([v]) => v !== null).map(([, i]) => i);
+  if (!fin.length) return;
+  const f = (D.funds || []).find(x => x.ticker === PXPICK);
+  $("#px-sub").textContent = `${f ? f.name : PXPICK} · 종가 ${pxDays.length}일 (${ymd(pxDays[0])} ~ ${ymd(pxDays.at(-1))})`;
+
+  svg.innerHTML = "";
+  const [W, H, narrow] = fitBox(svg, 900, 262);
+  const mL = narrow ? 42 : 52, mR = narrow ? 24 : 30, mT = 12;
+  const mB = narrow ? 54 : 48;                                  // mB 에 마커 띠 자리
+  const iw = W - mL - mR, ih = H - mT - mB;
+  const MKY = mT + ih + 20;                                     // 마커 띠 y
+  const fv = fin.map(i => vals[i]);
+  let lo = Math.min(...fv), hi = Math.max(...fv);
+  const pad = (hi - lo) * 0.1 || 1; lo -= pad; hi += pad;
+  const X = i => mL + iw * i / Math.max(1, days.length - 1);
+  const Y = v => mT + ih - (v - lo) / (hi - lo) * ih;
+  const col = f && f.underlying === "ETH" ? cssv("--eth") : cssv("--btc");
+
+  for (let i = 0; i <= 4; i++) {
+    const v = lo + (hi - lo) * i / 4, yy = Y(v);
+    svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: yy, y2: yy,
+      stroke: cssv("--grid"), "stroke-width": 1 }));
+    const t = el("text", { x: mL - 8, y: yy + 4, "text-anchor": "end",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = "$" + v.toFixed(v < 100 ? 1 : 0); svg.appendChild(t);
+  }
+
+  const dLine = fin.map((i, k) => `${k ? "L" : "M"}${X(i).toFixed(1)},${Y(vals[i]).toFixed(1)}`).join("");
+  const area = `${dLine}L${X(fin.at(-1))},${mT + ih}L${X(fin[0])},${mT + ih}Z`;
+  const gid = "pxg";
+  const defs = el("defs"); const lg = el("linearGradient",
+    { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 });
+  lg.appendChild(el("stop", { offset: "0%", "stop-color": col, "stop-opacity": .22 }));
+  lg.appendChild(el("stop", { offset: "100%", "stop-color": col, "stop-opacity": 0 }));
+  defs.appendChild(lg); svg.appendChild(defs);
+  svg.appendChild(el("path", { d: area, fill: `url(#${gid})` }));
+  svg.appendChild(el("path", { d: dLine, fill: "none", stroke: col, "stroke-width": 2,
+    "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+  // 끝점 강조
+  const lx = X(fin.at(-1)), ly = Y(vals[fin.at(-1)]);
+  svg.appendChild(el("circle", { cx: lx, cy: ly, r: 5, fill: col,
+    stroke: cssv("--surface-1"), "stroke-width": 2 }));
+
+  (narrow ? [0, days.length - 1] : [0, Math.floor(days.length / 2), days.length - 1]).forEach(i => {
+    const t = el("text", { x: X(i), y: H - 8,
+      "text-anchor": i === 0 ? "start" : i === days.length - 1 ? "end" : "middle",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = md(days[i]); svg.appendChild(t);
+  });
+
+  // 크로스헤어 + 툴팁
+  const cross = el("line", { y1: mT, y2: mT + ih, stroke: cssv("--text-muted"),
+    "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0 });
+  const dot = el("circle", { r: 4.5, fill: col, stroke: cssv("--surface-1"),
+    "stroke-width": 2, opacity: 0 });
+  svg.appendChild(cross); svg.appendChild(dot);
+  const tip = $("#px-tip");
+  const hit = el("rect", { x: mL, y: mT, width: iw, height: ih, fill: "transparent" });
+  svg.appendChild(hit);
+  hit.addEventListener("pointermove", ev => {
+    const b = svg.getBoundingClientRect();
+    const i = Math.max(0, Math.min(days.length - 1,
+      Math.round(((ev.clientX - b.left) / b.width * W - mL) / iw * (days.length - 1))));
+    const xx = X(i), v = vals[i];
+    cross.setAttribute("x1", xx); cross.setAttribute("x2", xx); cross.setAttribute("opacity", .6);
+    if (v === null) { dot.setAttribute("opacity", 0); }
+    else { dot.setAttribute("cx", xx); dot.setAttribute("cy", Y(v)); dot.setAttribute("opacity", 1); }
+    let prev = null;
+    for (let k = i - 1; k >= 0; k--) if (vals[k] !== null) { prev = vals[k]; break; }
+    const chg = (v !== null && prev) ? (v / prev - 1) * 100 : null;
+    const nd = (newsByDay()[days[i]] || []);
+    tip.innerHTML = `<div class="d">${ymd(days[i])}</div>`
+      + (v === null
+        ? `<div class="l"><span>종가</span><b style="color:var(--text-muted)">아직 없음</b></div>`
+        : `<div class="l"><span>종가</span><b>$${v.toFixed(4)}</b></div>`
+          + (chg === null ? "" : `<div class="l"><span>전일 대비</span><b style="color:${
+              chg >= 0 ? "var(--good)" : "var(--bad)"}">${chg >= 0 ? "+" : ""}${chg.toFixed(2)}%</b></div>`))
+      + (nd.length ? `<div class="l" style="margin-top:3px;border-top:1px solid var(--line-soft);
+          padding-top:3px"><span>속보</span><b>${nd.length}건${
+          nd.filter(x => x.importance === 3).length ? " · 중요 " +
+          nd.filter(x => x.importance === 3).length : ""}</b></div>` : "");
+    tip.classList.add("on");
+    tip.style.left = Math.min(b.width - 150, Math.max(0, xx / W * b.width - 70)) + "px";
+    tip.style.top = "6px";
+  });
+  hit.addEventListener("pointerleave", () => {
+    tip.classList.remove("on"); cross.setAttribute("opacity", 0); dot.setAttribute("opacity", 0);
+  });
+
+  // ── 속보 마커 (크로스헤어 위에 얹어야 클릭이 먹는다) ────────────────────────────────────────
+  // 두 서비스를 붙이는 이유가 여기다. 가격이 움직인 날, 무슨 일이 있었나.
+  const byDay = newsByDay();
+  const markDays = days.map((d, i) => [d, i]).filter(([d]) => byDay[d]?.length);
+  if (markDays.length) {
+    svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: MKY, y2: MKY,
+      stroke: cssv("--line"), "stroke-width": 1 }));
+    const bandLbl = el("text", { x: mL - 8, y: MKY + 4, "text-anchor": "end",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--sans)" });
+    bandLbl.textContent = "속보"; svg.appendChild(bandLbl);
+
+    // 붙어 있는 날끼리 알약이 겹치지 않게 왼쪽부터 밀어 넣는다
+    const slots = [];
+    let right = -Infinity;
+    for (const [d, i] of markDays) {
+      const pw = Math.max(20, 12 + String(byDay[d].length).length * 7);
+      let cx = X(i);
+      if (cx - pw / 2 < right + 3) cx = right + 3 + pw / 2;   // 앞 알약을 피해 오른쪽으로
+      right = cx + pw / 2;
+      slots.push([d, i, cx, pw]);
+    }
+    // 오른쪽 끝을 넘겼으면 거꾸로 되밀어 준다.
+    // 이걸 안 하면 좁은 화면에서 마지막 알약이 벽에 눌려 앞 알약을 덮는다.
+    let limit = W - 2;
+    for (let k = slots.length - 1; k >= 0; k--) {
+      const sl = slots[k];
+      if (sl[2] + sl[3] / 2 > limit) sl[2] = limit - sl[3] / 2;
+      limit = sl[2] - sl[3] / 2 - 3;
+    }
+    for (const [d, i, cx, pw] of slots) {
+      const items = byDay[d];
+      const hot = items.filter(x => x.importance === 3).length;
+      const on = SELDAY === d;
+      const c = hot ? cssv("--btc") : cssv("--text-secondary");
+      const g = el("g", { class: "mk" + (on ? " on" : ""), style: "cursor:pointer" });
+
+      // 그날 세로선 — 가격의 어느 지점인지 눈으로 잇는다
+      g.appendChild(el("path", {
+        d: `M${X(i)},${mT}L${X(i)},${MKY - 16}L${cx},${MKY - 9}`,
+        fill: "none", stroke: c, "stroke-width": 1, "stroke-dasharray": "2 3",
+        "pointer-events": "none", opacity: on ? .6 : .3 }));
+
+      // 알약 마커 — 건수를 안에 박아서 라인 끝점 동그라미와 헷갈리지 않게 한다
+      const label = String(items.length), ph = 17;
+      g.appendChild(el("rect", { class: "mk-pill", "pointer-events": "none",
+        x: cx - pw / 2, y: MKY - ph / 2, width: pw, height: ph, rx: ph / 2,
+        fill: on ? c : cssv("--surface-1"),
+        stroke: c, "stroke-width": on ? 2 : 1.5 }));
+      const tx = el("text", { "pointer-events": "none", x: cx, y: MKY + 4,
+        "text-anchor": "middle", "font-size": 10.5, "font-family": "var(--mono)",
+        "font-weight": 600, fill: on ? "#fff" : c });
+      tx.textContent = label; g.appendChild(tx);
+
+      const hit = el("rect", { class: "mk-hit", x: cx - pw / 2 - 6, y: MKY - 14,
+        width: pw + 12, height: 28 });
+      g.appendChild(hit);
+      g.addEventListener("click", () => { SELDAY = on ? null : d;
+        drawPriceChart(); drawDayChips(); showDay(SELDAY); });
+      svg.appendChild(g);
+    }
+  }
+  drawDayChips();
+  pxHint(markDays.length);
+}
+
+// ── 속보가 있는 날 = 누를 수 있는 버튼으로도 내놓는다 ──────────────────
+// 차트 위의 점을 찾아 누르라는 건 무리다. 같은 걸 글자로도 준다.
+function drawDayChips() {
+  const box = $("#px-chips"); if (!box) return;
+  const byDay = newsByDay();
+  const list = Object.keys(byDay).sort().reverse().slice(0, 14);
+  if (!list.length) { box.innerHTML = ""; return; }
+  box.innerHTML = list.map(d => {
+    const items = byDay[d];
+    const hot = items.filter(x => x.importance === 3).length;
+    return `<button class="chipday" data-d="${d}" aria-pressed="${SELDAY === d}">
+      ${hot ? "<i></i>" : ""}${md(d)} · ${items.length}건${hot ? ` · 중요 ${hot}` : ""}</button>`;
+  }).join("");
+  box.onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const d = b.dataset.d;
+    SELDAY = SELDAY === d ? null : d;
+    // 고른 날이 지금 보이는 구간 밖이면 구간을 넓혀 준다
+    if (SELDAY && D && PXPICK) {
+      const all = Object.keys((D.prices || {})[PXPICK] || {}).sort();
+      const idx = all.indexOf(SELDAY);
+      if (idx >= 0 && PXRANGE > 0 && idx < all.length - PXRANGE) {
+        PXRANGE = 0;
+        [...$("#px-range").children].forEach(x =>
+          x.setAttribute("aria-pressed", x.dataset.v === "0"));
+      }
+    }
+    drawPriceChart(); showDay(SELDAY);
+    if (SELDAY) $("#daypanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+}
+
+function pxHint(nMark) {
+  const h = $("#px-hint"); if (!h) return;
+  const total = Object.keys(newsByDay()).length;
+  if (!total) { h.textContent = ""; return; }
+  h.textContent = nMark
+    ? `차트 아래 띠의 숫자 알약이 그날 들어온 속보 건수입니다 — 주황색은 중요 속보가 섞인 날. 알약이나 위의 날짜 버튼을 누르면 그날 무슨 일이 있었는지 펼쳐집니다.`
+    : `지금 보이는 구간에는 속보가 붙은 날이 없습니다. 위의 날짜 버튼을 누르면 그날로 이동합니다. (속보 보유 ${total}일치)`;
+}
+
+// ── 펀드 표 ───────────────────────────────────────────
+let TFILTER = "all", TSORT = { k: "aum_usd", dir: -1 };
+$("#tbl-filter").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+  TFILTER = b.dataset.v; drawTable();
+});
+document.querySelectorAll("#tbl th").forEach(th => th.addEventListener("click", () => {
+  const k = th.dataset.k;
+  TSORT = { k, dir: TSORT.k === k ? -TSORT.dir : -1 };
+  document.querySelectorAll("#tbl th").forEach(x => x.removeAttribute("aria-sort"));
+  th.setAttribute("aria-sort", TSORT.dir < 0 ? "descending" : "ascending");
+  drawTable();
+}));
+
+function drawTable() {
+  let rows = (D.funds || []).filter(f => TFILTER === "all" || f.underlying === TFILTER);
+  const { k, dir } = TSORT;
+  rows = rows.slice().sort((a, b) => {
+    const x = a[k], y = b[k];
+    if (typeof x === "string") return dir * x.localeCompare(y);
+    return dir * ((x ?? -Infinity) - (y ?? -Infinity));
+  });
+  const spot = rows.filter(r => r.kind !== "strat").length;
+  $("#tbl-sub").textContent = `${rows.length}종목 · 현물 ${spot} / 선물·전략형 ${rows.length - spot}`;
+  $("#tbl tbody").innerHTML = rows.map(f => `<tr>
+    <td class="tk2"><i class="dot" style="background:var(--${f.underlying === "ETH" ? "eth" : "btc"})"></i>${f.ticker}${
+      f.kind === "strat" ? '<span class="tag mo">선물·전략</span>' : ""}<span class="nm">${f.name}</span></td>
+    <td>${f.name}${f.kind === "strat" ? '<span class="tag">선물·전략</span>' : ""}</td>
+    <td class="muted">${f.issuer || "—"}</td>
+    <td class="n">$${num(f.last, 2)}</td>
+    <td class="n">${num(f.shares)}</td>
+    <td class="n">${usd(f.aum_usd)}</td>
+    <td class="n ${f.tvol ? "" : "muted"}">${f.tvol ? num(f.tvol) : "—"}</td>
+  </tr>`).join("");
+}
+
+function drawFoot() {
+  const c = D.coverage || {};
+  const errs = (D.errors || []).length;
+  $("#foot").innerHTML =
+    `데이터 — 한국투자증권 OpenAPI(ETF 시세·상장주식수) · 업비트/바이낸스(코인 시세) ·
+     한국은행 ECOS(환율). 순유입은 상장주식수 변화 × 종가로 자체 산출합니다.<br>
+     가격 이력 ${c.price_days || 0}일 · 상장주식수 스냅샷 ${c.snapshot_days || 0}일치${
+       errs ? ` · 수집 경고 ${errs}건` : ""}.
+     정보 제공 목적이며 투자 권유가 아닙니다.`;
+}
+</script>
+
+<script>
+"use strict";
+// ══════════════════════════════════════════════════════
+// 속보 피드
+// ══════════════════════════════════════════════════════
+let N = null, NFILTER = "all", SELDAY = null;
+const DOW = ["일","월","화","수","목","금","토"];
+
+// ══════════════════════════════════════════════════════
+// 결합 — 날짜를 키로 두 데이터를 잇는다
+// ══════════════════════════════════════════════════════
+let _byDay = null;
+function newsByDay() {
+  if (_byDay) return _byDay;
+  _byDay = {};
+  for (const r of (N?.items || [])) {
+    const d = r.at.slice(0, 8);
+    (_byDay[d] ||= []).push(r);
+  }
+  for (const d in _byDay) {
+    // 중요한 것부터, 같으면 늦은 시각부터
+    _byDay[d].sort((a, b) => (b.importance - a.importance) || b.at.localeCompare(a.at));
+  }
+  return _byDay;
+}
+
+// 차트에서 하루를 고르면 그날 속보를 아래에 펼친다
+function showDay(day) {
+  const p = $("#daypanel");
+  if (!day) { p.hidden = true; return; }
+  const items = (newsByDay()[day] || []).slice(0, 12);
+  const all = (newsByDay()[day] || []).length;
+  p.hidden = false;
+  p.innerHTML = `<div class="hd2">
+      <h4>${dayLabel(day)} · 속보 ${all}건</h4>
+      <button class="close" id="dayclose">닫기 ✕</button>
+    </div>` + items.map(r => `<div class="dayitem${r.importance === 3 ? " hot" : ""}">
+      <time>${r.at.slice(8,10)}:${r.at.slice(10,12)}</time>
+      <div><a href="${r.url}" target="_blank" rel="noopener noreferrer nofollow">${esc(r.title)}</a>
+        <div class="src2">${esc(r.source)}${
+          (r.coins || []).length ? " · " + r.coins.join(", ") : ""}</div></div>
+    </div>`).join("")
+    + (all > items.length ? `<p class="hint">외 ${all - items.length}건 — 속보 탭에서 전체를 봅니다.</p>` : "");
+  $("#dayclose").onclick = () => { SELDAY = null; showDay(null); drawPriceChart(); drawDayChips(); };
+  p.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+$("#nav").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+  const news = b.dataset.v === "news";
+  $("#view-dash").classList.toggle("hidden", news);
+  $("#view-news").classList.toggle("hidden", !news);
+  scrollTo({ top: 0 });
+  if (news && !N) loadNews();
+});
+
+$("#news-filter").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+  NFILTER = b.dataset.v; drawFeed();
+});
+
+function loadNews() {
+  fetch("./news.json", { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => {
+      N = d; _byDay = null; drawFeed();
+      // 뉴스가 늦게 왔으면 가격 차트를 다시 그려 마커를 붙인다
+      if (typeof drawPriceChart === "function" && D) drawPriceChart();
+      drawDayChips();
+      if (!D) pxHint(0);
+    })
+    .catch(e => {
+      $("#news-sub").textContent = "불러오지 못했습니다";
+      $("#feed").innerHTML = `<div style="padding:20px 0;color:var(--text-muted);font-size:13px">
+        news.json 이 없습니다. <code>python3 news.py</code> 를 먼저 실행하세요. (${e.message})</div>`;
+    });
+}
+
+// 날짜 머리말 — 오늘/어제는 말로 쓴다
+function dayLabel(ymd8) {
+  const y = +ymd8.slice(0,4), m = +ymd8.slice(4,6), d = +ymd8.slice(6,8);
+  const dt = new Date(y, m - 1, d);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.round((now - dt) / 86400000);
+  const base = `${y}년 ${m}월 ${d}일 ${DOW[dt.getDay()]}요일`;
+  return diff === 0 ? `오늘, ${base}` : diff === 1 ? `어제, ${base}` : base;
+}
+
+function drawFeed() {
+  if (!N) return;
+  const rows = (N.items || []).filter(x => NFILTER === "all" || x.cat === NFILTER);
+  const hot = rows.filter(x => x.importance === 3).length;
+  $("#news-sub").textContent =
+    `${rows.length}건 · 중요 ${hot}건 · 기준 ${N.ts}`;
+
+  if (!rows.length) {
+    $("#feed").innerHTML = `<div style="padding:20px 0;color:var(--text-muted);font-size:13px">
+      해당하는 속보가 없습니다.</div>`;
+    return;
+  }
+  let out = [], day = null;
+  for (const r of rows) {
+    const d8 = r.at.slice(0, 8);
+    if (d8 !== day) { day = d8; out.push(`<div class="daybar">${dayLabel(d8)}</div>`); }
+    const hh = r.at.slice(8, 10), mm = r.at.slice(10, 12);
+    const tags = (r.coins || []).map(c =>
+      `<span class="coin ${c === "BTC" || c === "ETH" ? c : ""}">${c}</span>`).join("");
+    out.push(`<article class="ni${r.importance === 3 ? " hot" : ""}">
+      <time datetime="${d8}T${hh}:${mm}">${hh}:${mm}</time>
+      <div>
+        <h3><a href="${r.url}" target="_blank" rel="noopener noreferrer nofollow">${esc(r.title)}
+          <span class="ext" aria-label="새 창에서 열림">↗</span></a></h3>
+        <div class="meta"><span class="src">${esc(r.source)}</span>${tags}${
+          r.cat === "econ" ? '<span class="coin">경제</span>' : ""}</div>
+      </div>
+    </article>`);
+  }
+  $("#feed").innerHTML = out.join("");
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// 대시보드가 뜬 뒤 속보도 미리 받아둔다 — 탭 전환이 즉시 되도록
+addEventListener("load", () => setTimeout(() => { if (!N) loadNews(); }, 400));
+</script>
+</body>
+</html>
