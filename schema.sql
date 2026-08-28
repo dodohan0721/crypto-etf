@@ -28,13 +28,22 @@ CREATE TABLE IF NOT EXISTS comments (
 CREATE INDEX IF NOT EXISTS ix_comments_news ON comments(news_id, deleted, created);
 CREATE INDEX IF NOT EXISTS ix_comments_user ON comments(user_id, created);
 
-CREATE TABLE IF NOT EXISTS likes (
+-- 호재 / 악재
+--
+-- 첫날엔 '좋아요' 하나였는데, 코인니스에서 사람들이 실제로 누르는 건
+-- 한 방향 좋아요가 아니라 호재/악재 두 방향이다(실측 화면: 📈196 vs 📉43).
+-- 한 사람이 한 기사에 하나만 — 다시 누르면 취소, 반대를 누르면 갈아탄다.
+--
+-- 첫날의 likes 표는 쓰지 않는다(운영 데이터 0건이었다). 지우려면:
+--   npx wrangler d1 execute crypto-etf --remote --command "DROP TABLE IF EXISTS likes"
+CREATE TABLE IF NOT EXISTS votes (
   news_id TEXT NOT NULL,
   user_id TEXT NOT NULL REFERENCES users(id),
+  v       INTEGER NOT NULL,               -- 1 = 호재, -1 = 악재
   created INTEGER NOT NULL,
   PRIMARY KEY (news_id, user_id)
 );
-CREATE INDEX IF NOT EXISTS ix_likes_news ON likes(news_id);
+CREATE INDEX IF NOT EXISTS ix_votes_news ON votes(news_id, v);
 
 CREATE TABLE IF NOT EXISTS reports (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,

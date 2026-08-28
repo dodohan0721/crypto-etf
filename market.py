@@ -5,8 +5,8 @@
 한 소스가 죽어도 나머지는 살아야 하므로 항목별로 try 를 분리하고,
 실패하면 None 을 담아 화면에서 '—' 로 표시되게 한다.
 """
-import json, datetime, urllib.parse, urllib.request
-from kis import CFG, http
+import os, json, datetime, urllib.parse, urllib.request
+from kis import CFG, CACHE, http
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 
@@ -136,12 +136,68 @@ def fx_usdkrw():
     return {"rate": float(last["DATA_VALUE"]), "date": last["TIME"]}
 
 
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 코인 일별 종가 — "돈이 들어올 때 값이 어떻게 움직였나"를 겹쳐 그리려면 이력이 있어야 한다.
+# 현재가만으로는 못 그린다.
+# ══════════════════════════════════════════════════════════════════════
+_HIST = os.path.join(CACHE, "coin_prices.json")
+KRAKEN_PAIR = {"BTC": "XBTUSD", "ETH": "ETHUSD"}
+
+
+def _load_hist():
+    try:
+        d = json.load(open(_HIST, encoding="utf-8"))
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def coin_history(days=400):
+    """크라켄 일봉으로 BTC·ETH 달러 종가를 받아 캐시에 합친다.
+
+    받아온 게 없어도 캐시가 남아 있으면 그걸 쓴다 —
+    하루 실패했다고 차트가 통째로 비면 안 된다.
+    """
+    hist = _load_hist()
+    got = 0
+    for sym, pair in KRAKEN_PAIR.items():
+        try:
+            d = http(f"https://api.kraken.com/0/public/OHLC?pair={pair}&interval=1440")
+            if d.get("error"):
+                raise RuntimeError(str(d["error"])[:60])
+            rows = next((v for k, v in (d.get("result") or {}).items()
+                         if isinstance(v, list)), None)
+            if not rows:
+                raise RuntimeError("일봉이 비어 있다")
+            cur = hist.setdefault(sym, {})
+            for r in rows:
+                # [시각, 시가, 고가, 저가, 종가, vwap, 거래량, 체결수]
+                day = datetime.datetime.fromtimestamp(
+                    int(r[0]), datetime.timezone.utc).strftime("%Y%m%d")
+                cur[day] = round(float(r[4]), 2)
+                got += 1
+        except Exception as e:
+            raise RuntimeError(f"{sym} {str(e)[:50]}")
+
+    # 오래된 건 버린다. 400일이면 '전체' 보기에도 넉넉하다.
+    cut = (datetime.datetime.now(datetime.timezone.utc)
+           - datetime.timedelta(days=days)).strftime("%Y%m%d")
+    for sym in list(hist):
+        hist[sym] = {k: v for k, v in hist[sym].items() if k >= cut}
+    if got:
+        json.dump(hist, open(_HIST, "w", encoding="utf-8"),
+                  ensure_ascii=False, separators=(",", ":"))
+    return hist
+
 # ══════════════════════════════════════════════════════════════════════
 def collect(verbose=True):
     errs = []
     krw = _try(upbit_krw,  "업비트",    errs)
     usd = _try(global_usd, "달러시세",  errs)
     fx  = _try(fx_usdkrw,  "ECOS환율",  errs)
+    hist = _try(coin_history, "코인 일봉", errs) or _load_hist()
 
     supply = {}
     b = _try(btc_supply, "BTC유통량", errs)
@@ -156,7 +212,7 @@ def collect(verbose=True):
         if usd and sym in usd:
             mcap[sym] = usd[sym]["price_usd"] * supply[sym]
 
-    out = {"krw": krw, "usd": usd, "fx": fx, "supply": supply,
+    out = {"krw": krw, "usd": usd, "fx": fx, "supply": supply, "history": hist,
            "mcap_usd": mcap, "usd_source": (usd or {}).get("_source"), "errors": errs}
 
     if verbose:
@@ -172,6 +228,9 @@ def collect(verbose=True):
                   + (f" 시총 ${mcap[sym]/1e9:>8,.1f}B" if sym in mcap else ""))
         if usd and usd.get("_source"):
             print(f"  달러 시세 출처: {usd['_source']}")
+        n_hist = {k: len(v) for k, v in (hist or {}).items()}
+        if n_hist:
+            print(f"  코인 일봉  " + " · ".join(f"{k} {v}일" for k, v in n_hist.items()))
         if supply["_fallback"]:
             print(f"  ! 유통량 폴백 사용: {', '.join(supply['_fallback'])}")
         for x in errs:

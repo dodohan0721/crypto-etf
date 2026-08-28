@@ -106,6 +106,8 @@ def build(verbose=True):
             "krw": mk.get("krw"), "usd": mk.get("usd"),
             "supply": {k: v for k, v in (mk.get("supply") or {}).items() if not k.startswith("_")},
             "mcap_usd": mcap, "usd_source": mk.get("usd_source"),
+            # 순유입 막대 위에 겹쳐 그릴 코인 일별 종가(달러)
+            "history": mk.get("history") or {},
         },
         "funds": funds,
         "totals": {
