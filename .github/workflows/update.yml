@@ -93,7 +93,9 @@ jobs:
             echo "════════ ${n}회차  $(date '+%F %T') ════════"
             python3 news.py || echo "!! 속보 수집 실패 — 이번 회차 건너뜀"
 
-            npx --yes wrangler@latest pages deploy web \
+            # wrangler.toml 에 pages_build_output_dir 가 있으므로 폴더를 적지 않는다.
+            # 'pages deploy web' 이라고 쓰면 오류가 난다. functions/ 도 이때 같이 올라간다.
+            npx --yes wrangler@latest pages deploy \
               --project-name crypto-etf --branch main --commit-dirty=true \
               || echo "!! 배포 실패 — 다음 회차에 다시 시도"
 

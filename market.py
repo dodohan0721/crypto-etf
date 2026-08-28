@@ -35,8 +35,35 @@ def upbit_krw():
     return out
 
 
-def binance_usd():
-    """바이낸스 달러 시세."""
+def _kraken_usd():
+    """크라켄 달러 시세. c=현재가, o=당일 시가."""
+    d = http("https://api.kraken.com/0/public/Ticker?pair=XBTUSD,ETHUSD")
+    if d.get("error"):
+        raise RuntimeError(str(d["error"])[:60])
+    out = {}
+    for k, v in (d.get("result") or {}).items():
+        sym = "BTC" if "XBT" in k else ("ETH" if "ETH" in k else None)
+        if not sym:
+            continue
+        last, op = float(v["c"][0]), float(v["o"])
+        out[sym] = {"price_usd": last,
+                    "change_rate": (last / op - 1) * 100 if op else None}
+    if len(out) < 2:
+        raise RuntimeError(f"응답에 BTC/ETH 가 없다: {list((d.get('result') or {}))}")
+    return out
+
+
+def _coinbase_usd():
+    """코인베이스 현물가. 등락률은 안 준다."""
+    out = {}
+    for sym in ("BTC", "ETH"):
+        d = http(f"https://api.coinbase.com/v2/prices/{sym}-USD/spot")
+        out[sym] = {"price_usd": float(d["data"]["amount"]), "change_rate": None}
+    return out
+
+
+def _binance_usd():
+    """바이낸스. 미국 아이피는 451(법적 차단)로 막힌다 — GitHub Actions 에서 못 쓴다."""
     q = urllib.parse.quote('["BTCUSDT","ETHUSDT"]')
     out = {}
     for r in http(f"https://api.binance.com/api/v3/ticker/24hr?symbols={q}"):
@@ -44,6 +71,25 @@ def binance_usd():
         out[sym] = {"price_usd": float(r["lastPrice"]),
                     "change_rate": float(r["priceChangePercent"])}
     return out
+
+
+def global_usd():
+    """달러 시세 — 시가총액 계산의 근거다. 여기가 비면 '시총 대비 비중'이 통째로 빈다.
+
+    바이낸스만 쓰다가 GitHub Actions(미국 아이피)에서 451 로 막혔다(2026-08-27 실측).
+    미국에서도 열리는 크라켄을 앞에 세우고, 순서대로 살아 있는 걸 쓴다.
+    업비트 원화를 환율로 나눠 쓰면 안 된다 — 김치프리미엄만큼 시총이 부풀려진다.
+    """
+    tried = []
+    for fn, name in ((_kraken_usd, "크라켄"), (_coinbase_usd, "코인베이스"),
+                     (_binance_usd, "바이낸스")):
+        try:
+            out = fn()
+            out["_source"] = name
+            return out
+        except Exception as e:
+            tried.append(f"{name}({str(e)[:40]})")
+    raise RuntimeError("달러 시세 전부 실패 — " + " · ".join(tried))
 
 
 def btc_supply():
@@ -93,9 +139,9 @@ def fx_usdkrw():
 # ══════════════════════════════════════════════════════════════════════
 def collect(verbose=True):
     errs = []
-    krw = _try(upbit_krw,   "업비트",   errs)
-    usd = _try(binance_usd, "바이낸스", errs)
-    fx  = _try(fx_usdkrw,   "ECOS환율", errs)
+    krw = _try(upbit_krw,  "업비트",    errs)
+    usd = _try(global_usd, "달러시세",  errs)
+    fx  = _try(fx_usdkrw,  "ECOS환율",  errs)
 
     supply = {}
     b = _try(btc_supply, "BTC유통량", errs)
@@ -105,16 +151,13 @@ def collect(verbose=True):
     supply["_fallback"] = [k for k, v in (("BTC", b), ("ETH", e)) if not v]
     # ETH 유통량은 연 변동이 1% 미만이라 폴백 상수를 써도 시총 오차는 미미하다.
 
-    mcap, kimchi = {}, {}
+    mcap = {}
     for sym in ("BTC", "ETH"):
         if usd and sym in usd:
             mcap[sym] = usd[sym]["price_usd"] * supply[sym]
-        if krw and usd and fx and sym in krw and sym in usd:
-            implied = krw[sym]["price_krw"] / fx["rate"]
-            kimchi[sym] = (implied / usd[sym]["price_usd"] - 1) * 100
 
     out = {"krw": krw, "usd": usd, "fx": fx, "supply": supply,
-           "mcap_usd": mcap, "kimchi_pct": kimchi, "errors": errs}
+           "mcap_usd": mcap, "usd_source": (usd or {}).get("_source"), "errors": errs}
 
     if verbose:
         print("\n[코인·환율]")
@@ -126,8 +169,9 @@ def collect(verbose=True):
             print(f"  {sym:<4} "
                   + (f"{p_krw:>13,.0f}원 " if p_krw else f"{'—':>14} ")
                   + (f"${p_usd:>11,.2f} " if p_usd else f"{'—':>13} ")
-                  + (f" 시총 ${mcap[sym]/1e9:>8,.1f}B" if sym in mcap else "")
-                  + (f"  김프 {kimchi[sym]:+.2f}%" if sym in kimchi else ""))
+                  + (f" 시총 ${mcap[sym]/1e9:>8,.1f}B" if sym in mcap else ""))
+        if usd and usd.get("_source"):
+            print(f"  달러 시세 출처: {usd['_source']}")
         if supply["_fallback"]:
             print(f"  ! 유통량 폴백 사용: {', '.join(supply['_fallback'])}")
         for x in errs:

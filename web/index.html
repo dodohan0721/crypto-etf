@@ -207,6 +207,84 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
   .ni h3{font-size:14px}
 }
 
+/* ── 커뮤니티 ─────────────────────────────────────────
+   속보 하나하나에 붙는 좋아요·댓글. 비어 있을 때가 기본이라 조용해야 한다. */
+.acts{display:flex;gap:6px;margin-top:7px}
+.act{appearance:none;border:1px solid var(--line);background:transparent;color:var(--text-muted);
+  font-family:var(--sans);font-size:11.5px;padding:3px 9px;border-radius:999px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;transition:border-color .12s,color .12s}
+.act:hover{border-color:var(--text-muted);color:var(--text-secondary)}
+.act:focus-visible{outline:2px solid var(--eth);outline-offset:1px}
+.act .n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.act .n:empty{display:none}
+.act.on{border-color:var(--btc);color:var(--btc)}
+.act.open{border-color:var(--text-muted);color:var(--text-primary);background:var(--surface-2)}
+
+.cbox{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface-2)}
+.cm{display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px 0;
+  border-bottom:1px solid var(--line-soft)}
+.cm:last-of-type{border-bottom:0}
+.cm .who{font-size:11.5px;color:var(--text-muted);margin-bottom:3px}
+.cm .who b{color:var(--text-secondary);font-weight:600}
+.cm .bd{font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.cm .tools{display:flex;gap:8px;align-items:flex-start}
+.cm .tools button{appearance:none;border:0;background:transparent;color:var(--text-muted);
+  font-family:var(--sans);font-size:11px;cursor:pointer;padding:2px 3px}
+.cm .tools button:hover{color:var(--bad);text-decoration:underline}
+.cwrite{display:flex;gap:8px;margin-top:10px}
+.cwrite textarea{flex:1;font-family:var(--sans);font-size:13px;line-height:1.5;padding:8px 10px;
+  border:1px solid var(--line);border-radius:7px;background:var(--surface-1);
+  color:var(--text-primary);resize:vertical;min-height:38px;max-height:160px}
+.cwrite textarea:focus{outline:2px solid var(--eth);outline-offset:-1px;border-color:transparent}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface-1);
+  color:var(--text-primary);font-family:var(--sans);font-size:12.5px;font-weight:500;
+  padding:7px 14px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--text-muted)}
+.btn.pri{background:var(--btc);border-color:var(--btc);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.cmsg{font-size:11.5px;margin-top:7px;min-height:14px}
+.cmsg.bad{color:var(--bad)}
+
+/* 머리말의 로그인 자리 */
+.who-hd{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--text-secondary)}
+.who-hd img{width:20px;height:20px;border-radius:50%;object-fit:cover}
+.who-hd .lo{appearance:none;border:0;background:transparent;color:var(--text-muted);
+  font-family:var(--sans);font-size:11.5px;cursor:pointer;padding:2px}
+.who-hd .lo:hover{color:var(--text-primary);text-decoration:underline}
+
+/* 신고함 */
+.sheet .box.wide{max-width:720px;max-height:82vh;overflow:auto}
+.rp{border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin-bottom:10px;
+  background:var(--surface-2)}
+.rp .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  font-size:11.5px;color:var(--text-muted);margin-bottom:6px}
+.rp .cnt{font-family:var(--mono);color:var(--bad);font-weight:600}
+.rp .bd{font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word;
+  padding:8px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.rp .art{font-size:11.5px;color:var(--text-muted);margin-top:6px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.rp .row2{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.rp .row2 .btn{font-size:11.5px;padding:5px 10px}
+.rp.gone{opacity:.55}
+.rp .why{color:var(--text-secondary)}
+
+/* 로그인 시트 */
+.sheet{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.45);padding:20px}
+.sheet[open]{display:flex}
+.sheet .box{background:var(--surface-1);border:1px solid var(--line);border-radius:14px;
+  padding:26px 24px;width:100%;max-width:330px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.sheet h3{font-size:16px;margin-bottom:6px}
+.sheet p{font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
+.oa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  border:0;border-radius:8px;padding:12px;font-family:var(--sans);font-size:14px;font-weight:600;
+  cursor:pointer;margin-bottom:9px}
+.oa.kakao{background:#FEE500;color:#191600}
+.oa.naver{background:#03C75A;color:#fff}
+.oa:disabled{opacity:.45;cursor:default}
+.sheet .cancel{width:100%;margin-top:4px}
+
 /* ── 손안의 화면 ────────────────────────────────────────
    비디오 속 두 서비스가 다 세로 화면이었다. 여기서 안 읽히면 만든 의미가 없다. */
 section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려지지 않게 */
@@ -247,6 +325,7 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
       <button data-v="news" aria-pressed="false">속보</button>
     </div>
     <div class="hd-meta" id="ts">불러오는 중…</div>
+    <div class="who-hd" id="who"></div>
   </div>
 </header>
 
@@ -269,6 +348,7 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
       <div class="card">
         <div class="lbl">기간 합계</div>
         <div class="rows" id="flow-sums"></div>
+        <p class="hint" id="flow-sums-note" style="margin-top:10px"></p>
       </div>
     </div>
     <div id="flow-empty" style="margin-top:14px"></div>
@@ -291,6 +371,7 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
       </div>
       <div class="chart"><svg id="flow-svg" viewBox="0 0 900 260" role="img"
         aria-label="일별 ETF 순유입"></svg><div class="tip" id="flow-tip"></div></div>
+      <p class="hint" id="flow-chart-note"></p>
     </div>
   </section>
 
@@ -477,17 +558,18 @@ function render() {
 
 // ── 시세 스트립 ───────────────────────────────────────
 function drawTicker() {
-  const c = D.coins || {}, k = c.krw || {}, u = c.usd || {}, kp = c.kimchi_pct || {};
+  const c = D.coins || {}, k = c.krw || {}, u = c.usd || {};
   const out = [];
   if (D.fx) out.push(`<div class="tk"><b>환율</b><span class="p">${num(D.fx.rate, 2)}</span>
     <span class="s">원/달러 · ${ymd(D.fx.date)}</span></div>`);
   for (const [sym, nm, col] of [["BTC", "비트코인", "--btc"], ["ETH", "이더리움", "--eth"]]) {
-    const kr = k[sym]?.price_krw, us = u[sym]?.price_usd, ki = kp[sym];
+    const kr = k[sym]?.price_krw, us = u[sym]?.price_usd, ch = k[sym]?.change_rate;
     if (kr == null && us == null) continue;
     out.push(`<div class="tk"><b style="color:var(${col})">${nm}</b>
       <span class="p">${kr != null ? num(kr) + "원" : "—"}</span>
-      <span class="s">${us != null ? "$" + num(us, 2) : ""}${
-        ki != null ? " · 김프 " + (ki > 0 ? "+" : "") + ki.toFixed(2) + "%" : ""}</span></div>`);
+      <span class="s">${ch != null ? `<b style="font-weight:500;color:${
+        ch >= 0 ? "var(--good)" : "var(--bad)"}">${ch >= 0 ? "+" : ""}${ch.toFixed(2)}%</b> · ` : ""}${
+        us != null ? "$" + num(us, 2) : ""}</span></div>`);
   }
   $("#ticker").innerHTML = out.join("");
 }
@@ -523,6 +605,20 @@ function drawFlow() {
       return `<div class="row"><span class="k">${lb}</span>
         <span class="v ${v == null ? "muted" : v >= 0 ? "pos" : "neg"}">${signed(v)}</span></div>`;
     }).join("");
+  // 상장주식수는 과거 이력이 없다. 그래서 이 두 칸은 "수집 시작일부터"만 말할 수 있다.
+  // 30일 칸에 2일치를 담아 놓고 30일인 척하면 그건 거짓말이다.
+  const daily = f.daily || [];
+  const first = daily.length ? daily[0].date : null;
+  const n = daily.length;
+  const short = [["week", 7], ["month", 30], ["quarter", 90]].filter(([, p]) => n < p);
+  $("#flow-sums-note").textContent = short.length && first
+    ? `상장주식수는 과거 이력이 제공되지 않아 ${ymd(first)}부터 쌓고 있습니다. `
+      + `지금은 ${n}일치라 위 세 칸이 아직 같은 값입니다.`
+    : "";
+  $("#flow-chart-note").textContent = first
+    ? `${ymd(first)}부터 수집 · ${n}일치. 하루에 막대 하나씩 늘어납니다.`
+    : "";
+
   $("#flow-chart-sec").hidden = false;
   drawFlowChart();
 }
@@ -951,7 +1047,7 @@ function drawFoot() {
   const c = D.coverage || {};
   const errs = (D.errors || []).length;
   $("#foot").innerHTML =
-    `데이터 — 한국투자증권 OpenAPI(ETF 시세·상장주식수) · 업비트/바이낸스(코인 시세) ·
+    `데이터 — 한국투자증권 OpenAPI(ETF 시세·상장주식수) · 업비트(원화 시세) · 크라켄(달러 시세) ·
      한국은행 ECOS(환율). 순유입은 상장주식수 변화 × 종가로 자체 산출합니다.<br>
      가격 이력 ${c.price_days || 0}일 · 상장주식수 스냅샷 ${c.snapshot_days || 0}일치${
        errs ? ` · 수집 경고 ${errs}건` : ""}.
@@ -1075,10 +1171,17 @@ function drawFeed() {
           <span class="ext" aria-label="새 창에서 열림">↗</span></a></h3>
         <div class="meta"><span class="src">${esc(r.source)}</span>${tags}${
           r.cat === "econ" ? '<span class="coin">경제</span>' : ""}</div>
+        <div class="acts" data-n="${r.id}" data-t="${esc(r.title)}" data-u="${esc(r.url)}">
+          <button class="act like" data-a="like" aria-pressed="false"
+            aria-label="좋아요"><span class="ic">♡</span><span class="n"></span></button>
+          <button class="act cmt" data-a="cmt">댓글 <span class="n"></span></button>
+        </div>
+        <div class="cbox" hidden></div>
       </div>
     </article>`);
   }
   $("#feed").innerHTML = out.join("");
+  if (typeof loadCounts === "function") loadCounts();
 }
 
 function esc(s) {
@@ -1088,6 +1191,308 @@ function esc(s) {
 
 // 대시보드가 뜬 뒤 속보도 미리 받아둔다 — 탭 전환이 즉시 되도록
 addEventListener("load", () => setTimeout(() => { if (!N) loadNews(); }, 400));
+</script>
+<div class="sheet" id="rep-sheet" role="dialog" aria-modal="true" aria-labelledby="rp-h">
+  <div class="box wide">
+    <h3 id="rp-h">신고함</h3>
+    <p>신고가 들어온 댓글입니다. 서로 다른 세 사람이 신고하면 자동으로 가려집니다.</p>
+    <div id="rp-list"></div>
+    <button class="btn cancel" id="rp-x">닫기</button>
+  </div>
+</div>
+<div class="sheet" id="login-sheet" role="dialog" aria-modal="true" aria-labelledby="ls-h">
+  <div class="box">
+    <h3 id="ls-h">로그인</h3>
+    <p>속보에 한마디 남기려면 로그인이 필요합니다.<br>닉네임과 프로필 사진만 받아옵니다.</p>
+    <button class="oa kakao" data-p="kakao">카카오로 시작하기</button>
+    <button class="oa naver" data-p="naver">네이버로 시작하기</button>
+    <button class="btn cancel" id="ls-x">닫기</button>
+  </div>
+</div>
+<script>
+"use strict";
+// ══════════════════════════════════════════════════════════════════════
+//  커뮤니티 — 로그인 · 좋아요 · 댓글 · 신고
+//
+//  화면은 그대로 정적 파일이고, 여기서만 /api/* 를 부른다.
+//  API 가 없는 환경(로컬 파일로 열었을 때)에서는 조용히 다 감춘다 —
+//  대시보드와 속보는 로그인 없이도 그대로 보여야 하기 때문이다.
+// ══════════════════════════════════════════════════════════════════════
+let ME = null, API = true, LIKED = new Set();
+
+const api = (path, opt) => fetch(path, Object.assign({ credentials: "same-origin" }, opt || {}))
+  .then(async r => {
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(d.msg || d.error || r.status), { data: d, status: r.status });
+    return d;
+  });
+
+// ── 나 ────────────────────────────────────────────────────────────────
+function drawWho() {
+  const box = $("#who"); if (!box) return;
+  if (!API) { box.innerHTML = ""; return; }
+  if (!ME) {
+    box.innerHTML = `<button class="lo" id="who-in">로그인</button>`;
+    $("#who-in").onclick = () => openLogin();
+    return;
+  }
+  box.innerHTML = `${ME.avatar ? `<img src="${esc(ME.avatar)}" alt="">` : ""}
+    <span>${esc(ME.nick)}</span>${ME.admin
+      ? ' <button class="lo" id="who-rep" style="color:var(--btc)">신고함</button>' : ""}
+    <button class="lo" id="who-out">로그아웃</button>`;
+  $("#who-out").onclick = () => api("/api/logout", { method: "POST" })
+    .then(() => { ME = null; LIKED.clear(); drawWho(); drawFeed(); });
+  if (ME.admin) $("#who-rep").onclick = openReports;
+}
+
+function loadMe() {
+  return api("/api/me")
+    .then(d => { ME = d.user; drawWho(); return d; })
+    .catch(() => { API = false; drawWho(); });
+}
+
+// ── 로그인 시트 ────────────────────────────────────────────────────────
+function openLogin() {
+  const sh = $("#login-sheet");
+  sh.setAttribute("open", "");
+  sh.querySelector(".oa").focus();
+}
+function closeLogin() { $("#login-sheet").removeAttribute("open"); }
+
+$("#login-sheet").addEventListener("click", e => {
+  if (e.target.id === "login-sheet" || e.target.id === "ls-x") return closeLogin();
+  const b = e.target.closest(".oa"); if (!b) return;
+  location.href = `/api/auth/start?p=${b.dataset.p}`;
+});
+addEventListener("keydown", e => { if (e.key === "Escape") closeLogin(); });
+
+// ── 개수 붙이기 ────────────────────────────────────────────────────────
+// 기사마다 따로 물으면 300번을 부른다. 보이는 것들을 한 번에 묶어 묻는다.
+function loadCounts() {
+  // API 가 없는 자리(로컬 파일로 열었을 때)에서는 좋아요·댓글 자체를 걷어낸다.
+  // 눌리지도 않는 버튼을 남겨 두면 고장난 화면으로 보인다.
+  if (!API) { document.querySelectorAll("#feed .acts, #feed .cbox").forEach(x => x.remove()); return; }
+  const boxes = [...document.querySelectorAll("#feed .acts")];
+  if (!boxes.length) return;
+  api("/api/counts")
+    .then(d => {
+      LIKED = new Set(d.mine || []);
+      for (const b of boxes) {
+        const id = b.dataset.n;
+        const lk = b.querySelector(".like"), cm = b.querySelector(".cmt");
+        setLike(lk, LIKED.has(id), d.likes[id] || 0);
+        cm.querySelector(".n").textContent = d.comments[id] || "";
+      }
+    })
+    .catch(() => { API = false; loadCounts(); });
+}
+
+function setLike(btn, on, n) {
+  btn.classList.toggle("on", !!on);
+  btn.setAttribute("aria-pressed", on ? "true" : "false");
+  btn.querySelector(".ic").textContent = on ? "♥" : "♡";
+  btn.querySelector(".n").textContent = n || "";
+}
+
+// ── 피드에서의 조작 ────────────────────────────────────────────────────
+$("#feed").addEventListener("click", e => {
+  const b = e.target.closest(".act"); if (!b) return;
+  const acts = b.closest(".acts"), nid = acts.dataset.n;
+  if (b.dataset.a === "like") return toggleLike(b, nid);
+  if (b.dataset.a === "cmt")  return toggleBox(b, acts, nid);
+});
+
+function toggleLike(btn, nid) {
+  if (!ME) return openLogin();
+  btn.disabled = true;
+  api("/api/like", { method: "POST", headers: { "Content-Type": "application/json" },
+                     body: JSON.stringify({ n: nid }) })
+    .then(d => { setLike(btn, d.on, d.n); d.on ? LIKED.add(nid) : LIKED.delete(nid); })
+    .catch(err => { if (err.status === 401) openLogin(); })
+    .finally(() => { btn.disabled = false; });
+}
+
+function toggleBox(btn, acts, nid) {
+  const box = acts.parentElement.querySelector(".cbox");
+  const opening = box.hidden;
+  box.hidden = !opening;
+  btn.classList.toggle("open", opening);
+  if (opening) loadComments(box, acts, nid);
+}
+
+// ── 댓글 ──────────────────────────────────────────────────────────────
+function loadComments(box, acts, nid) {
+  box.innerHTML = `<div class="cmsg">불러오는 중…</div>`;
+  api("/api/comments?n=" + nid)
+    .then(d => { ME = d.me || ME; drawComments(box, acts, nid, d.items || []); })
+    .catch(() => { box.innerHTML = `<div class="cmsg bad">댓글을 불러오지 못했습니다.</div>`; });
+}
+
+function drawComments(box, acts, nid, items) {
+  const list = items.length
+    ? items.map(c => `<div class="cm" data-id="${c.id}">
+        <div>
+          <div class="who"><b>${esc(c.nick)}</b> · ${when(c.at)}</div>
+          <div class="bd">${esc(c.body)}</div>
+        </div>
+        <div class="tools">${
+          c.mine || (ME && ME.admin)
+            ? `<button data-x="del">삭제</button>`
+            : `<button data-x="rep">신고</button>`}</div>
+      </div>`).join("")
+    : `<div class="cmsg">아직 한마디도 없습니다.</div>`;
+
+  const write = ME
+    ? `<div class="cwrite">
+         <textarea id="ct-${nid}" rows="1" maxlength="500"
+           placeholder="${ME.blocked ? "글쓰기가 제한된 계정입니다" : "한마디 남기기 (링크는 쓸 수 없습니다)"}"
+           ${ME.blocked ? "disabled" : ""}></textarea>
+         <button class="btn pri" data-x="send" ${ME.blocked ? "disabled" : ""}>등록</button>
+       </div>`
+    : `<div class="cwrite"><button class="btn" data-x="login">로그인하고 한마디 남기기</button></div>`;
+
+  box.innerHTML = list + write + `<div class="cmsg" data-x="msg"></div>`;
+  bindBox(box, acts, nid);
+}
+
+function bindBox(box, acts, nid) {
+  const msg = box.querySelector('[data-x="msg"]');
+  const say = (t, bad) => { msg.textContent = t || ""; msg.className = "cmsg" + (bad ? " bad" : ""); };
+
+  box.onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const x = b.dataset.x;
+    if (x === "login") return openLogin();
+
+    if (x === "send") {
+      const ta = box.querySelector("textarea");
+      const body = (ta.value || "").trim();
+      if (!body) return;
+      b.disabled = true; say("");
+      api("/api/comments", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ n: nid, body, title: acts.dataset.t, url: acts.dataset.u }) })
+        .then(() => { ta.value = ""; loadComments(box, acts, nid); bumpCount(acts, +1); })
+        .catch(err => { say(err.message || "등록하지 못했습니다.", true);
+                        if (err.status === 401) openLogin(); })
+        .finally(() => { b.disabled = false; });
+      return;
+    }
+
+    const row = b.closest(".cm"); if (!row) return;
+    const id = row.dataset.id;
+
+    if (x === "del") {
+      if (!confirm("이 댓글을 지울까요?")) return;
+      api(`/api/comments?id=${id}`, { method: "DELETE" })
+        .then(() => { loadComments(box, acts, nid); bumpCount(acts, -1); })
+        .catch(err => say(err.message || "지우지 못했습니다.", true));
+      return;
+    }
+
+    if (x === "rep") {
+      if (!ME) return openLogin();
+      const reason = prompt("신고 사유를 간단히 적어주세요 (선택)") ;
+      if (reason === null) return;
+      api("/api/report", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: Number(id), reason }) })
+        .then(d => { say(d.hidden ? "신고가 접수되어 이 글은 가려졌습니다." : "신고가 접수되었습니다.");
+                     if (d.hidden) loadComments(box, acts, nid); })
+        .catch(err => say(err.message || "신고하지 못했습니다.", true));
+    }
+  };
+}
+
+function bumpCount(acts, d) {
+  const n = acts.querySelector(".cmt .n");
+  const v = Math.max(0, (Number(n.textContent) || 0) + d);
+  n.textContent = v || "";
+}
+
+// ── 신고함 (관리자) ───────────────────────────────────────────────────
+function openReports() {
+  $("#rep-sheet").setAttribute("open", "");
+  loadReports();
+}
+$("#rep-sheet").addEventListener("click", e => {
+  if (e.target.id === "rep-sheet" || e.target.id === "rp-x")
+    return $("#rep-sheet").removeAttribute("open");
+  const b = e.target.closest("button[data-w]"); if (!b) return;
+  const card = b.closest(".rp");
+  b.disabled = true;
+  const payload = b.dataset.w === "block" || b.dataset.w === "unblock"
+    ? { what: b.dataset.w, user: card.dataset.user,
+        reason: b.dataset.w === "block" ? (prompt("차단 사유 (선택)") || "") : "" }
+    : { what: b.dataset.w, id: Number(card.dataset.id) };
+  api("/api/admin/act", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload) })
+    .then(() => loadReports())
+    .catch(err => alert(err.message || "처리하지 못했습니다."))
+    .finally(() => { b.disabled = false; });
+});
+
+function loadReports() {
+  const box = $("#rp-list");
+  box.innerHTML = `<div class="cmsg">불러오는 중…</div>`;
+  api("/api/admin/reports")
+    .then(d => {
+      const it = d.items || [];
+      if (!it.length) { box.innerHTML = `<div class="cmsg">처리할 신고가 없습니다.</div>`; return; }
+      box.innerHTML = it.map(r => `<div class="rp${r.deleted ? " gone" : ""}"
+          data-id="${r.id}" data-user="${esc(r.user_id)}">
+        <div class="top">
+          <span><b>${esc(r.nick)}</b>${r.blocked ? " · 차단됨" : ""} · ${when(r.created)}${
+            r.deleted ? ` · 가려짐(${r.del_by === "reported" ? "신고 누적" : "관리자"})` : ""}</span>
+          <span class="cnt">신고 ${r.reports}건</span>
+        </div>
+        <div class="bd">${esc(r.body)}</div>
+        ${r.reasons ? `<div class="art why">사유 — ${esc(r.reasons)}</div>` : ""}
+        <div class="art">${esc(r.news_title || "(기사 정보 없음)")}</div>
+        <div class="row2">
+          ${r.deleted
+            ? `<button class="btn" data-w="restore">되살리기</button>`
+            : `<button class="btn" data-w="delete">글 삭제</button>`}
+          <button class="btn" data-w="done">신고 처리완료</button>
+          ${r.blocked
+            ? `<button class="btn" data-w="unblock">차단 풀기</button>`
+            : `<button class="btn" data-w="block">이용자 차단</button>`}
+        </div>
+      </div>`).join("");
+    })
+    .catch(err => { box.innerHTML = `<div class="cmsg bad">${esc(err.message || "불러오지 못했습니다.")}</div>`; });
+}
+
+// "3분 전" — 몇 시 몇 분보다 이쪽이 읽힌다
+function when(ms) {
+  const s = Math.floor((Date.now() - ms) / 1000);
+  if (s < 60) return "방금";
+  if (s < 3600) return `${Math.floor(s / 60)}분 전`;
+  if (s < 86400) return `${Math.floor(s / 3600)}시간 전`;
+  const d = new Date(ms);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
+// ── 돌아왔을 때 ────────────────────────────────────────────────────────
+(function boot() {
+  const q = new URLSearchParams(location.search);
+  const err = q.get("login_error");
+  const claim = q.get("admin");
+
+  loadMe().then(() => {
+    if (err) alert(err);
+    if (claim && ME) {
+      api("/api/admin/claim", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: claim }) })
+        .then(d => { alert(`${d.nick} 님이 관리자로 등록되었습니다.`); return loadMe(); })
+        .catch(e2 => alert("관리자 등록 실패: " + (e2.message || "")))
+        .finally(() => history.replaceState(null, "", location.pathname));
+    }
+    if (N) drawFeed();
+  });
+
+  if (err || q.get("login") || claim) {
+    if (!claim) history.replaceState(null, "", location.pathname);
+  }
+})();
 </script>
 </body>
 </html>

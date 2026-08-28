@@ -1,0 +1,17 @@
+# Cloudflare Pages 설정
+#
+# ※ 이 파일이 있으면 배포할 때 폴더를 따로 적지 않습니다.
+#      npx wrangler pages deploy          (O)
+#      npx wrangler pages deploy web      (X — 오류)
+#    .github/workflows/update.yml 도 그렇게 맞춰 두었습니다.
+#
+# database_id 는 setup_community.sh 가 D1 을 만들면서 채워 넣습니다.
+
+name = "crypto-etf"
+pages_build_output_dir = "web"
+compatibility_date = "2026-08-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "crypto-etf"
+database_id = "b67cc822-76b2-4936-8b71-97bda137969c"

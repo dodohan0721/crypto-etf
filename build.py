@@ -105,7 +105,7 @@ def build(verbose=True):
         "coins": {
             "krw": mk.get("krw"), "usd": mk.get("usd"),
             "supply": {k: v for k, v in (mk.get("supply") or {}).items() if not k.startswith("_")},
-            "mcap_usd": mcap, "kimchi_pct": mk.get("kimchi_pct"),
+            "mcap_usd": mcap, "usd_source": mk.get("usd_source"),
         },
         "funds": funds,
         "totals": {
