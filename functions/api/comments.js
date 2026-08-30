@@ -1,4 +1,4 @@
-import { me, pubUser, json, setupError, checkBody, tooFast } from "../_lib.js";
+import { me, pubUser, json, setupError, checkBody, tooFast, TARGET } from "../_lib.js";
 
 const PAGE = 50;
 
@@ -7,7 +7,7 @@ export async function onRequestGet({ request, env }) {
   const bad = setupError(env); if (bad) return bad;
   const q = new URL(request.url).searchParams;
   const nid = (q.get("n") || "").trim();
-  if (!/^[0-9a-f]{6,40}$/.test(nid)) return json({ error: "bad_news_id" }, 400);
+  if (!TARGET.test(nid)) return json({ error: "bad_news_id" }, 400);
 
   const u = await me(request, env);
   const { results } = await env.DB.prepare(
@@ -36,7 +36,7 @@ export async function onRequestPost({ request, env }) {
   let b = {};
   try { b = await request.json(); } catch (e) {}
   const nid = String(b.n || "").trim();
-  if (!/^[0-9a-f]{6,40}$/.test(nid)) return json({ error: "bad_news_id" }, 400);
+  if (!TARGET.test(nid)) return json({ error: "bad_news_id" }, 400);
 
   const body = String(b.body || "").trim().replace(/\s+\n/g, "\n");
   const why = checkBody(body);

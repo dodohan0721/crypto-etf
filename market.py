@@ -23,9 +23,14 @@ def _try(fn, label, box):
 
 
 # ══════════════════════════════════════════════════════════════════════
+# 홈 화면 시세표에 올릴 종목. 코인니스 첫 화면과 같은 다섯이다.
+HOME_COINS = ["BTC", "ETH", "USDT", "SOL", "XRP"]
+
+
 def upbit_krw():
     """업비트 원화 시세. 인증 불필요 · CORS 개방 → 브라우저도 직접 호출 가능."""
-    url = "https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH"
+    url = "https://api.upbit.com/v1/ticker?markets=" + ",".join(
+        "KRW-" + c for c in HOME_COINS)
     out = {}
     for r in http(url):
         sym = r["market"].split("-")[1]

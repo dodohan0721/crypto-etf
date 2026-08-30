@@ -25,6 +25,51 @@ def _sum_recent(daily, days):
     return sum(d["total"] for d in daily if d["date"] > cut)
 
 
+def aum_history(supply, price_hist):
+    """일별 운용자산과 시총 대비 비중.
+
+    코인마켓캡은 이 두 칸을 시계열로 보여준다. 우리도 스냅샷이 이미 하루치씩
+    쌓이고 있으므로 그걸 되짚어 만들면 된다. 순유입과 같은 한계가 있다 —
+    상장주식수 과거 이력이 없어 수집 시작일부터만 나온다.
+
+    시가총액은 그날 코인 종가 × 지금 유통량으로 본다.
+    유통량은 연 변동이 1% 안쪽이라 과거 유통량을 못 구해도 오차가 미미하다.
+    """
+    snaps = etf.load_snapshots()
+    aum_daily, pct_daily = [], []
+    for day in sorted(snaps):
+        a = collections.defaultdict(float)
+        for tkr, s in (snaps[day] or {}).items():
+            meta = BY_TICKER.get(tkr, {})
+            if (s.get("kind") or meta.get("kind", "spot")) != "spot":
+                continue                                   # 선물·전략형은 뺀다
+            u = s.get("underlying") or meta.get("underlying")
+            v = s.get("aum_usd")
+            if v is None and s.get("shares") and s.get("last"):
+                v = s["shares"] * s["last"]
+            if u and v:
+                a[u] += v
+        if not a:
+            continue
+        row = {"date": day, "BTC": round(a.get("BTC", 0.0), 2),
+               "ETH": round(a.get("ETH", 0.0), 2), "ALL": round(sum(a.values()), 2)}
+        aum_daily.append(row)
+
+        # 같은 날 코인 종가가 있어야 비중을 낼 수 있다
+        p = {c: (price_hist.get(c) or {}).get(day) for c in ("BTC", "ETH")}
+        mc = {c: p[c] * supply[c] for c in ("BTC", "ETH") if p.get(c) and supply.get(c)}
+        if mc:
+            q = {"date": day}
+            for c in ("BTC", "ETH"):
+                if c in mc and a.get(c):
+                    q[c] = round(a[c] / mc[c] * 100, 3)
+            if len(mc) == 2 and row["ALL"]:
+                q["ALL"] = round(row["ALL"] / (mc["BTC"] + mc["ETH"]) * 100, 3)
+            if len(q) > 1:
+                pct_daily.append(q)
+    return aum_daily, pct_daily
+
+
 def build(verbose=True):
     r  = etf.run(verbose)
     mk = market.collect(verbose)
@@ -73,6 +118,9 @@ def build(verbose=True):
     # 선물·전략형은 현물을 들고 있지 않으므로 넣으면 과대계상된다.
     pct = {}
     mcap = mk.get("mcap_usd") or {}
+    aum_daily, pct_daily = aum_history(
+        {k: v for k, v in (mk.get("supply") or {}).items() if not k.startswith("_")},
+        mk.get("history") or {})
     for u in ("BTC", "ETH"):
         if mcap.get(u):
             pct[u] = round(aum_spot[u] / mcap[u] * 100, 2)
@@ -117,6 +165,8 @@ def build(verbose=True):
                              "ETH": round(aum_spot["ETH"], 2),
                              "ALL": round(aum_spot_all, 2)},
             "pct_of_mcap": pct,
+            "aum_daily": aum_daily,
+            "pct_daily": pct_daily,
         },
         "flows": {
             "daily": daily,

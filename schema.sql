@@ -55,3 +55,33 @@ CREATE TABLE IF NOT EXISTS reports (
   UNIQUE (comment_id, user_id)              -- 한 사람이 같은 글을 여러 번 신고해도 한 건
 );
 CREATE INDEX IF NOT EXISTS ix_reports_open ON reports(done, comment_id);
+
+-- 커뮤니티 게시판
+--
+-- 댓글·투표·신고는 속보에 쓰던 표를 그대로 쓴다.
+-- 그쪽 news_id 자리에 'p<글번호>' 를 넣는다 — 표를 하나 더 만들면
+-- 신고 처리와 관리자 화면을 두 벌로 유지해야 한다. 그럴 이유가 없다.
+CREATE TABLE IF NOT EXISTS posts (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL REFERENCES users(id),
+  title   TEXT NOT NULL,
+  body    TEXT NOT NULL,
+  created INTEGER NOT NULL,
+  deleted INTEGER NOT NULL DEFAULT 0,
+  del_by  TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_posts_live ON posts(deleted, created);
+CREATE INDEX IF NOT EXISTS ix_posts_user ON posts(user_id, created);
+
+-- 게시글 신고. 댓글 신고(reports)와 같은 모양이되 표를 나눴다.
+-- 한 표에 섞으면 "이 번호가 댓글이냐 글이냐"를 매번 따져야 한다.
+CREATE TABLE IF NOT EXISTS post_reports (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  post_id INTEGER NOT NULL REFERENCES posts(id),
+  user_id TEXT NOT NULL REFERENCES users(id),
+  reason  TEXT,
+  created INTEGER NOT NULL,
+  done    INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (post_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS ix_post_reports_open ON post_reports(done, post_id);

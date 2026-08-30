@@ -11,23 +11,27 @@ export async function onRequestPost({ request, env }) {
   try { b = await request.json(); } catch (e) {}
   const id = Number(b.id) || null;
   const target = String(b.user || "").trim() || null;
+  const post = b.kind === "p";
+  const T = post ? "posts" : "comments";
+  const R = post ? "post_reports" : "reports";
+  const FK = post ? "post_id" : "comment_id";
 
   switch (b.what) {
     case "delete":
       if (!id) return json({ error: "bad_id" }, 400);
-      await env.DB.prepare("UPDATE comments SET deleted = 1, del_by = 'admin' WHERE id = ?")
+      await env.DB.prepare(`UPDATE ${T} SET deleted = 1, del_by = 'admin' WHERE id = ?`)
         .bind(id).run();
       break;
     case "restore":
       if (!id) return json({ error: "bad_id" }, 400);
       await env.DB.batch([
-        env.DB.prepare("UPDATE comments SET deleted = 0, del_by = NULL WHERE id = ?").bind(id),
-        env.DB.prepare("UPDATE reports SET done = 1 WHERE comment_id = ?").bind(id),
+        env.DB.prepare(`UPDATE ${T} SET deleted = 0, del_by = NULL WHERE id = ?`).bind(id),
+        env.DB.prepare(`UPDATE ${R} SET done = 1 WHERE ${FK} = ?`).bind(id),
       ]);
       break;
     case "done":
       if (!id) return json({ error: "bad_id" }, 400);
-      await env.DB.prepare("UPDATE reports SET done = 1 WHERE comment_id = ?").bind(id).run();
+      await env.DB.prepare(`UPDATE ${R} SET done = 1 WHERE ${FK} = ?`).bind(id).run();
       break;
     case "block":
       if (!target) return json({ error: "bad_user" }, 400);

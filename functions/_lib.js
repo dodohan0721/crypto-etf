@@ -132,6 +132,11 @@ export async function upsertUser(env, id, nick, avatar) {
   return await getUser(env, id);
 }
 
+// 댓글·투표·신고가 붙는 대상의 id.
+//   속보  = 제목 해시 16자리
+//   게시글 = 'p' + 글번호
+export const TARGET = /^([0-9a-f]{6,40}|p[0-9]{1,12})$/;
+
 // ── 글 검사 ───────────────────────────────────────────────────────────────
 // 링크는 통째로 막는다. 코인 커뮤니티에서 링크 도배는 거의 전부 스캠이다.
 const LINK = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|io|co|kr|me|xyz|top|vip|link|site)\b)/i;

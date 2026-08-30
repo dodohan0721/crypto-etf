@@ -14,7 +14,8 @@
   --line:#dcdcd8; --line-soft:#e8e8e5;
   --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7c7b76;
   --btc:#eb6834; --eth:#2a78d6;
-  --good:#0f7a4f; --bad:#c5372c; --warn:#8a6100;
+  --up:#c0261c; --down:#12428f;      /* 상승 빨강 · 하락 파랑 — 한국 증권가 관행 */
+  --bad:#c5372c; --warn:#8a6100;     /* 오류·경고. 시세와 무관한 자리에만 쓴다 */
   --grid:#e6e6e3;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
@@ -27,7 +28,8 @@
     --line:#33332f; --line-soft:#262624;
     --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
     --btc:#d95926; --eth:#3987e5;
-    --good:#3fae7c; --bad:#e26a5e; --warn:#c99a3c;
+    --up:#ff7b72; --down:#79b8ff;
+    --bad:#e26a5e; --warn:#c99a3c;
     --grid:#2b2b29;
     --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 24px -16px rgba(0,0,0,.8);
   }
@@ -38,7 +40,8 @@
   --line:#33332f; --line-soft:#262624;
   --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
   --btc:#d95926; --eth:#3987e5;
-  --good:#3fae7c; --bad:#e26a5e; --warn:#c99a3c;
+  --up:#ff7b72; --down:#79b8ff;
+  --bad:#e26a5e; --warn:#c99a3c;
   --grid:#2b2b29;
   --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 24px -16px rgba(0,0,0,.8);
 }
@@ -77,7 +80,7 @@ section{margin-top:26px}
 /* 히어로 숫자 */
 .hero{font-family:var(--mono);font-size:clamp(30px,5vw,42px);font-weight:600;
   letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
-.hero.pos{color:var(--good)} .hero.neg{color:var(--bad)}
+.hero.pos{color:var(--up)} .hero.neg{color:var(--down)}
 .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--text-muted);margin-bottom:6px}
 .unit{font-size:13px;color:var(--text-muted);margin-top:4px}
@@ -89,7 +92,7 @@ section{margin-top:26px}
 .row:last-child{border-bottom:0}
 .row .k{color:var(--text-secondary)}
 .row .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500}
-.v.pos{color:var(--good)} .v.neg{color:var(--bad)}
+.v.pos{color:var(--up)} .v.neg{color:var(--down)}
 
 /* 세그먼트 토글 */
 .seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);
@@ -211,7 +214,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 /* 통화 전환 — 머리말에서 제일 작게 */
 .seg.cur{padding:2px}
 .seg.cur button{padding:3px 9px;font-size:12.5px;font-family:var(--mono);min-width:28px}
-.seg.cur[hidden]{display:none}
+.seg[hidden]{display:none}
 
 /* ── 커뮤니티 ─────────────────────────────────────────
    속보 하나하나에 붙는 좋아요·댓글. 비어 있을 때가 기본이라 조용해야 한다. */
@@ -224,10 +227,10 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 .act .n{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .act .n:empty{display:none}
 .act .ic{font-size:9px;line-height:1}
-.act.up:hover{border-color:var(--good);color:var(--good)}
-.act.down:hover{border-color:var(--bad);color:var(--bad)}
-.act.up[aria-pressed="true"]{border-color:var(--good);color:#fff;background:var(--good)}
-.act.down[aria-pressed="true"]{border-color:var(--bad);color:#fff;background:var(--bad)}
+.act.up:hover{border-color:var(--up);color:var(--up)}
+.act.down:hover{border-color:var(--down);color:var(--down)}
+.act.up[aria-pressed="true"]{border-color:var(--up);color:#fff;background:var(--up)}
+.act.down[aria-pressed="true"]{border-color:var(--down);color:#fff;background:var(--down)}
 .act.open{border-color:var(--text-muted);color:var(--text-primary);background:var(--surface-2)}
 
 .cbox{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:9px;
@@ -262,6 +265,35 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 .who-hd .lo{appearance:none;border:0;background:transparent;color:var(--text-muted);
   font-family:var(--sans);font-size:11.5px;cursor:pointer;padding:2px}
 .who-hd .lo:hover{color:var(--text-primary);text-decoration:underline}
+
+/* 펀드별 순유입 — 가로 막대 목록 */
+.fbar{display:grid;grid-template-columns:64px 1fr 96px;gap:10px;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
+.fbar:last-child{border-bottom:0}
+.fbar .tk3{font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:6px}
+.fbar .track{position:relative;height:14px}
+.fbar .zero{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--line)}
+.fbar .fill{position:absolute;top:0;height:14px;border-radius:3px}
+.fbar .val{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* 커뮤니티 */
+.inp{width:100%;font-family:var(--sans);font-size:13.5px;line-height:1.55;padding:9px 11px;
+  border:1px solid var(--line);border-radius:8px;background:var(--surface-1);
+  color:var(--text-primary);resize:vertical}
+.inp:focus{outline:2px solid var(--eth);outline-offset:-1px;border-color:transparent}
+.post{border:1px solid var(--line);border-radius:10px;background:var(--surface-1);
+  padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.post h3{font-size:15px;line-height:1.45;margin-bottom:5px}
+.post .who{font-size:11.5px;color:var(--text-muted);margin-bottom:8px}
+.post .who b{color:var(--text-secondary);font-weight:600}
+.post .bd{font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-break:break-word;
+  color:var(--text-secondary);margin-bottom:10px}
+.post .tools{display:flex;gap:8px;margin-left:auto}
+.post .tools button{appearance:none;border:0;background:transparent;color:var(--text-muted);
+  font-family:var(--sans);font-size:11px;cursor:pointer;padding:2px 3px}
+.post .tools button:hover{color:var(--bad);text-decoration:underline}
+.post .foot{display:flex;align-items:center;gap:6px}
+.post .foot .acts{margin-top:0}
 
 /* 신고함 */
 .sheet .box.wide{max-width:720px;max-height:82vh;overflow:auto}
@@ -299,13 +331,18 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
    비디오 속 두 서비스가 다 세로 화면이었다. 여기서 안 읽히면 만든 의미가 없다. */
 section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려지지 않게 */
 @media (max-width:700px){
-  section{scroll-margin-top:64px}
-  /* 머리말이 두 줄이면 세로 화면의 12%를 먹는다. 한 줄로 줄인다. */
-  .hd{padding:9px 16px;gap:10px;flex-wrap:nowrap}
-  .brand{font-size:14px;white-space:nowrap}
+  section{scroll-margin-top:96px}
+  /* 폰에서는 탭을 아랫줄로 내린다 — 코인니스도 로고 줄과 탭 줄이 따로다.
+     탭이 넷이 된 뒤로 로그인까지 한 줄에 넣으면 넘친다(390px 에서 422px). */
+  .hd{padding:8px 16px;gap:8px;flex-wrap:wrap}
+  .brand{font-size:14px;white-space:nowrap;margin-right:auto}
   .brand span{display:none}
-  .hd-meta{font-size:10px;letter-spacing:0;white-space:nowrap}
+  .hd-meta{display:none}                 /* 기준 시각은 각 칸과 맨 아래에 또 있다 */
   .seg.cur button{padding:3px 7px;font-size:12px;min-width:24px}
+  .who-hd{font-size:11.5px;gap:5px}
+  .who-hd span{max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #nav{order:9;width:100%;display:flex}
+  #nav button{flex:1;padding:6px 4px;font-size:12.5px}
   .nav button{padding:5px 11px;font-size:12.5px}
   .sec-hd{flex-direction:column;align-items:flex-start;gap:10px}
   .seg{flex-wrap:wrap}
@@ -316,6 +353,7 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
   #tbl th:nth-child(7), #tbl td:nth-child(7){display:none}
   #tbl th, #tbl td{padding:9px 8px}
   #tbl td:nth-child(3){max-width:88px;overflow:hidden;text-overflow:ellipsis}
+  .hide-sm{display:none}
   .tag.mo{display:inline-block;margin-left:5px}
   .tk2 .nm{display:block;font-family:var(--sans);font-weight:400;font-size:11px;
     color:var(--text-muted);max-width:96px;overflow:hidden;text-overflow:ellipsis;
@@ -332,8 +370,10 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
   <div class="hd">
     <div class="brand">ETF 자금흐름 <span>· 비트코인 &amp; 이더리움</span></div>
     <div class="nav" id="nav">
-      <button data-v="dash" aria-pressed="true">대시보드</button>
+      <button data-v="home" aria-pressed="true">홈</button>
+      <button data-v="dash" aria-pressed="false">ETF</button>
       <button data-v="news" aria-pressed="false">속보</button>
+      <button data-v="comm" aria-pressed="false">커뮤니티</button>
     </div>
     <div class="seg cur" id="cur"><button data-v="KRW">₩</button><button data-v="USD">$</button></div>
     <div class="hd-meta" id="ts">불러오는 중…</div>
@@ -344,7 +384,58 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
 <div class="ticker"><div class="ticker-in" id="ticker"></div></div>
 
 <div class="wrap">
-<div id="view-dash">
+<div id="view-home">
+
+  <!-- ── 시세 ─────────────────────────────── -->
+  <section style="margin-top:20px">
+    <div class="sec-hd"><div><h2>시세</h2>
+      <p class="sub" id="home-px-sub">업비트 원화 기준</p></div></div>
+    <div class="tw">
+      <table id="home-px">
+        <thead><tr>
+          <th>코인</th><th class="n">가격</th><th class="n">등락률</th>
+          <th class="n hide-sm">24시간 거래대금</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── ETF 한눈에 ───────────────────────── -->
+  <section>
+    <div class="sec-hd">
+      <div><h2>ETF 자금</h2><p class="sub" id="home-flow-sub"></p></div>
+      <button class="btn" data-go="dash">자세히 보기</button>
+    </div>
+    <div class="card">
+      <div class="lbl">최근 순유입</div>
+      <div class="hero" id="home-hero">—</div>
+      <div class="unit" id="home-hero-unit"></div>
+      <div class="rows" id="home-aum" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- ── 속보 ─────────────────────────────── -->
+  <section>
+    <div class="sec-hd">
+      <div><h2>지금 들어온 속보</h2><p class="sub" id="home-news-sub">불러오는 중…</p></div>
+      <button class="btn" data-go="news">속보 전체</button>
+    </div>
+    <div class="card" style="padding:4px 20px 12px"><div class="feed" id="home-feed"></div></div>
+  </section>
+
+  <!-- ── 이야기가 붙은 속보 ───────────────── -->
+  <section id="home-hot-sec" hidden>
+    <div class="sec-hd">
+      <div><h2>말이 많은 속보</h2><p class="sub">호재·악재 표와 댓글이 붙은 순서</p></div>
+      <button class="btn" data-go="news">속보 전체</button>
+    </div>
+    <div class="card" style="padding:4px 20px 12px"><div class="feed" id="home-hot"></div></div>
+  </section>
+
+</div><!-- /view-home -->
+
+<div id="view-dash" class="hidden">
 
   <!-- ── 순유입 요약 ─────────────────────── -->
   <section>
@@ -371,6 +462,10 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
     <div class="sec-hd">
       <div><h2>순유입 추이</h2><p class="sub">일별 · 자산별 누적</p></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div class="seg" id="flow-mode">
+        <button data-v="coin" aria-pressed="true">코인별</button>
+        <button data-v="fund" aria-pressed="false">펀드별</button>
+      </div>
       <div class="seg" id="flow-line" aria-label="겹쳐 볼 코인 가격">
         <button data-v="BTC" aria-pressed="true">＋비트코인 가격</button>
         <button data-v="ETH" aria-pressed="false">＋이더리움</button>
@@ -391,6 +486,7 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
       </div>
       <div class="chart"><svg id="flow-svg" viewBox="0 0 900 260" role="img"
         aria-label="일별 ETF 순유입"></svg><div class="tip" id="flow-tip"></div></div>
+      <div id="flow-fund" hidden></div>
       <p class="hint" id="flow-chart-note"></p>
     </div>
   </section>
@@ -416,6 +512,39 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
         <div class="rows" id="pct-rows" style="margin-top:4px"></div>
         <div class="chart" style="margin-top:10px"><svg id="pct-svg" viewBox="0 0 300 70"
           role="img" aria-label="시가총액 대비 ETF 비중"></svg></div>
+      </div>
+    </div>
+
+    <!-- 시계열 — 스냅샷이 이틀 이상 쌓이면 나타난다 -->
+    <div id="aum-ts" hidden style="margin-top:14px">
+      <div class="sec-hd" style="margin-bottom:12px">
+        <div><h3 style="font-size:15px">시간에 따라</h3>
+          <p class="sub" id="aum-ts-sub"></p></div>
+        <div class="seg" id="aum-range">
+          <button data-v="30" aria-pressed="true">30일</button>
+          <button data-v="365" aria-pressed="false">1년</button>
+          <button data-v="0" aria-pressed="false">전체</button>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="lbl">총 운용자산</div>
+          <div class="legend" style="margin:8px 0 10px">
+            <span><i style="background:var(--btc)"></i>비트코인</span>
+            <span><i style="background:var(--eth)"></i>이더리움</span>
+          </div>
+          <div class="chart"><svg id="aumts-svg" viewBox="0 0 440 190" role="img"
+            aria-label="일별 운용자산"></svg><div class="tip" id="aumts-tip"></div></div>
+        </div>
+        <div class="card">
+          <div class="lbl">시가총액 대비 비중</div>
+          <div class="legend" style="margin:8px 0 10px">
+            <span><i style="background:var(--btc)"></i>비트코인</span>
+            <span><i style="background:var(--eth)"></i>이더리움</span>
+          </div>
+          <div class="chart"><svg id="pctts-svg" viewBox="0 0 440 190" role="img"
+            aria-label="일별 시가총액 대비 비중"></svg><div class="tip" id="pctts-tip"></div></div>
+        </div>
       </div>
     </div>
   </section>
@@ -493,6 +622,30 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
   </section>
 </div><!-- /view-news -->
 
+<div id="view-comm" class="hidden">
+  <section style="margin-top:20px">
+    <div class="sec-hd">
+      <div><h2>커뮤니티</h2><p class="sub" id="comm-sub">불러오는 중…</p></div>
+    </div>
+
+    <div class="card" id="comm-write">
+      <div class="lbl">한 편 써 보기</div>
+      <input id="pw-title" class="inp" maxlength="80" placeholder="제목" style="margin-top:10px">
+      <textarea id="pw-body" class="inp" rows="3" maxlength="2000"
+        placeholder="하고 싶은 이야기 (링크는 쓸 수 없습니다)" style="margin-top:8px"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <span class="cmsg" id="pw-msg"></span>
+        <button class="btn pri" id="pw-send">올리기</button>
+      </div>
+    </div>
+
+    <div id="comm-list" style="margin-top:14px"></div>
+    <div style="display:flex;justify-content:center;margin-top:14px">
+      <button class="btn" id="comm-more" hidden>더 보기</button>
+    </div>
+  </section>
+</div><!-- /view-comm -->
+
   <footer>
     <div id="foot"></div>
   </footer>
@@ -539,6 +692,15 @@ const price = (v, dp) => {
   const r = rate();
   return r ? `${num(v * r, 0)}원` : `$${num(v, dp == null ? 2 : dp)}`;
 };
+
+// 업비트에서 원화로 받은 금액. 위의 mny 는 달러가 들어온다는 전제라 따로 둔다.
+const mnyKRW = v => {
+  if (v == null || !isFinite(v)) return "—";
+  const a = Math.abs(v), sg = v < 0 ? "−" : "";
+  return sg + ((CUR === "KRW" || !FX) ? krwShort(a) : usdShort(a / FX));
+};
+const priceKRW = v => (v == null || !isFinite(v)) ? "—"
+  : (CUR === "KRW" || !FX) ? `${num(v)}원` : `$${num(v / FX, 2)}`;
 
 // 차트 축 — 짧아야 한다
 const axisMny = v => {
@@ -636,13 +798,82 @@ function render() {
   }
   drawCur();
   paint();
-  addEventListener("resize", () => { drawFlowChart(); drawPriceChart(); }, { passive: true });
+  addEventListener("resize", () => { drawFlowChart(); drawPriceChart(); drawAumTs(); }, { passive: true });
+}
+
+// ── 홈 ────────────────────────────────────────────────
+// 코인니스는 들어오면 시세부터 보여준다. 우리도 그 자리를 만든다.
+const COIN_NM = { BTC: "비트코인", ETH: "이더리움", USDT: "테더",
+                  SOL: "솔라나", XRP: "엑스알피" };
+const COIN_ORDER = ["BTC", "ETH", "USDT", "SOL", "XRP"];
+
+function drawHome() {
+  if (!D) return;
+  const k = (D.coins || {}).krw || {};
+  const rows = COIN_ORDER.filter(c => k[c]);
+  $("#home-px").querySelector("tbody").innerHTML = rows.map(c => {
+    const r = k[c], ch = r.change_rate;
+    const up = ch >= 0;
+    return `<tr>
+      <td class="tk2"><i class="dot" style="background:var(--${
+        c === "ETH" ? "eth" : c === "BTC" ? "btc" : "text-muted"})"></i>${c}<span class="nm">${
+        COIN_NM[c] || c}</span></td>
+      <td class="n">${priceKRW(r.price_krw)}</td>
+      <td class="n" style="color:var(--${up ? "up" : "down"})">${
+        ch == null ? "—" : (up ? "▲" : "▼") + Math.abs(ch).toFixed(2) + "%"}</td>
+      <td class="n hide-sm muted">${mnyKRW(r.acc_value_krw)}</td>
+    </tr>`;
+  }).join("");
+  $("#home-px-sub").textContent = D.fx
+    ? `업비트 원화 기준 · 환율 ${num(D.fx.rate, 2)}원` : "업비트 원화 기준";
+
+  // ETF 한눈에
+  const f = D.flows || {}, t = D.totals || {};
+  const sp = t.aum_spot_usd || t.aum_usd || {};
+  const h = $("#home-hero");
+  if (f.latest) {
+    h.textContent = signed(f.latest.total);
+    h.className = "hero " + (f.latest.total >= 0 ? "pos" : "neg");
+    $("#home-hero-unit").innerHTML =
+      `<span style="color:var(--btc)">●</span> 비트코인 ${signed(f.latest.BTC)}
+       &nbsp; <span style="color:var(--eth)">●</span> 이더리움 ${signed(f.latest.ETH)}`;
+    $("#home-flow-sub").textContent = `${ymd(f.latest.date)} 기준`;
+  } else {
+    h.textContent = "—"; h.className = "hero";
+    $("#home-flow-sub").textContent = "수집 중";
+  }
+  $("#home-aum").innerHTML = [["BTC", "비트코인", "--btc"], ["ETH", "이더리움", "--eth"]]
+    .map(([c, nm, col]) => `<div class="row">
+      <span class="k"><i class="dot" style="background:var(${col})"></i>${nm} ETF 운용자산</span>
+      <span class="v">${mny(sp[c])}</span></div>`).join("");
+
+  drawHomeNews();
+}
+
+function drawHomeNews() {
+  if (!N) return;
+  const items = (N.items || []).slice(0, 6);
+  $("#home-feed").innerHTML = items.map(niHTML).join("");
+  $("#home-news-sub").textContent = N.ts ? `기준 ${N.ts}` : "";
+  if (typeof loadCounts === "function") loadCounts();
+}
+
+// 표가 좁은 화면에서 거래대금 칸을 접는다
+function drawHomeHot(counts) {
+  const box = $("#home-hot"), sec = $("#home-hot-sec");
+  if (!N || !counts) { sec.hidden = true; return; }
+  const score = r => (counts.comments[r.id] || 0) * 2
+                   + (counts.up[r.id] || 0) + (counts.down[r.id] || 0);
+  const top = (N.items || []).filter(r => score(r) > 0)
+    .sort((a, b) => score(b) - score(a)).slice(0, 3);
+  sec.hidden = !top.length;
+  if (top.length) { box.innerHTML = top.map(niHTML).join(""); paintCounts(counts); }
 }
 
 // 숫자가 들어간 자리만 다시 그린다.
 // render() 를 다시 부르면 안내 띠가 겹겹이 쌓이고 resize 감시가 중복으로 붙는다.
 function paint() {
-  drawTicker(); drawFlow(); drawAum(); drawPct(); drawPrice(); drawTable(); drawFoot();
+  drawTicker(); drawHome(); drawFlow(); drawAum(); drawAumTs(); drawPct(); drawPrice(); drawTable(); drawFoot();
 }
 
 // ── 시세 스트립 ───────────────────────────────────────
@@ -654,10 +885,10 @@ function drawTicker() {
   for (const [sym, nm, col] of [["BTC", "비트코인", "--btc"], ["ETH", "이더리움", "--eth"]]) {
     const kr = k[sym]?.price_krw, us = u[sym]?.price_usd, ch = k[sym]?.change_rate;
     if (kr == null && us == null) continue;
-    out.push(`<div class="tk"><b style="color:var(${col})">${nm}</b>
+    out.push(`<div class="tk"><b><i class="dot" style="background:var(${col})"></i>${nm}</b>
       <span class="p">${kr != null ? num(kr) + "원" : "—"}</span>
       <span class="s">${ch != null ? `<b style="font-weight:500;color:${
-        ch >= 0 ? "var(--good)" : "var(--bad)"}">${ch >= 0 ? "+" : ""}${ch.toFixed(2)}%</b> · ` : ""}${
+        ch >= 0 ? "var(--up)" : "var(--down)"}">${ch >= 0 ? "▲" : "▼"}${Math.abs(ch).toFixed(2)}%</b> · ` : ""}${
         us != null ? "$" + num(us, 2) : ""}</span></div>`);
   }
   $("#ticker").innerHTML = out.join("");
@@ -704,15 +935,13 @@ function drawFlow() {
     ? `상장주식수는 과거 이력이 제공되지 않아 ${ymd(first)}부터 쌓고 있습니다. `
       + `지금은 ${n}일치라 위 세 칸이 아직 같은 값입니다.`
     : "";
-  $("#flow-chart-note").textContent = first
-    ? `${ymd(first)}부터 수집 · ${n}일치. 하루에 막대 하나씩 늘어납니다.`
-    : "";
+  flowNote();
 
   $("#flow-chart-sec").hidden = false;
   drawFlowChart();
 }
 
-let FLOWRANGE = 30, FLOWLINE = "BTC";
+let FLOWRANGE = 30, FLOWLINE = "BTC", FLOWMODE = "coin";
 $("#flow-range").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
@@ -731,6 +960,13 @@ function fitBox(svg, baseW, baseH, minW) {
   return [W, H, narrow];
 }
 
+$("#flow-mode").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+  FLOWMODE = b.dataset.v;
+  drawFlowChart();
+});
+
 $("#flow-line").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
@@ -742,6 +978,16 @@ function drawFlowChart() {
   const svg = $("#flow-svg"); if (!svg || !D?.flows?.daily?.length) return;
   let rows = D.flows.daily;
   if (FLOWRANGE > 0) rows = rows.slice(-FLOWRANGE);
+
+  // 펀드별은 막대를 쌓지 않는다. 스무 개를 색으로 구분하는 건 무리다 —
+  // 기간 합계를 가로 막대로 줄 세우는 쪽이 "어느 펀드로 갔나"를 훨씬 빨리 답한다.
+  const fundBox = $("#flow-fund");
+  const byFund = FLOWMODE === "fund";
+  svg.parentElement.hidden = byFund;
+  fundBox.hidden = !byFund;
+  $("#flow-line").hidden = byFund;
+  if (byFund) { drawByFund(rows); flowNote(); return; }
+
   svg.innerHTML = "";
   const [W, H, narrow] = fitBox(svg, 900, 260);
   // 가격 선을 겹치면 오른쪽에 그 눈금이 들어간다
@@ -850,6 +1096,7 @@ function drawFlowChart() {
     tip.style.top = "6px";
   });
   hit.addEventListener("pointerleave", () => tip.classList.remove("on"));
+  flowNote();
 }
 </script>
 <script>
@@ -880,6 +1127,146 @@ function drawAum() {
   $("#aum-rows").innerHTML = parts.map(([k, v, col, nm]) =>
     `<div class="row"><span class="k"><i class="dot" style="background:var(${col})"></i>${nm}</span>
      <span class="v">${mny(v)}</span></div>`).join("");
+}
+
+// ── AUM · 비중 시계열 ─────────────────────────────────
+// 코인마켓캡은 이 둘을 시계열로 보여준다. 우리도 스냅샷이 쌓인 만큼은 그릴 수 있다.
+let AUMRANGE = 30;
+
+$("#aum-range").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
+  AUMRANGE = +b.dataset.v;
+  drawAumTs();
+});
+
+function slice(rows) {
+  return AUMRANGE > 0 ? rows.slice(-AUMRANGE) : rows;
+}
+
+function drawAumTs() {
+  const t = D.totals || {};
+  const aum = t.aum_daily || [], pct = t.pct_daily || [];
+  const box = $("#aum-ts");
+  // 하루치로는 선이 안 그려진다. 그럴 땐 아예 안 보여주는 게 낫다.
+  box.hidden = aum.length < 2;
+  if (box.hidden) return;
+  $("#aum-ts-sub").textContent =
+    `${ymd(aum[0].date)}부터 수집 · ${aum.length}일치`;
+  areaChart($("#aumts-svg"), $("#aumts-tip"), slice(aum), mny, axisMny);
+  if (pct.length >= 2)
+    lineChart($("#pctts-svg"), $("#pctts-tip"), slice(pct));
+}
+
+// 비트코인 위에 이더리움을 쌓는다 — 영상 속 총 AUM 차트와 같은 모양
+function areaChart(svg, tip, rows, fmt, axis) {
+  svg.innerHTML = "";
+  const [W, H, narrow] = fitBox(svg, 440, 190, 260);
+  const mL = narrow ? 44 : 56, mR = 8, mT = 10, mB = 24;
+  const iw = W - mL - mR, ih = H - mT - mB;
+  const hi = Math.max(...rows.map(r => r.ALL)) * 1.08 || 1;
+  const X = i => mL + iw * i / Math.max(1, rows.length - 1);
+  const Y = v => mT + ih - v / hi * ih;
+
+  for (let i = 0; i <= 3; i++) {
+    const v = hi * i / 3, yy = Y(v);
+    svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: yy, y2: yy,
+      stroke: cssv("--grid"), "stroke-width": 1 }));
+    const t = el("text", { x: mL - 7, y: yy + 4, "text-anchor": "end",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = axis(v); svg.appendChild(t);
+  }
+
+  // 아래부터 쌓는다. 사이에 2px 틈을 둬 경계가 보이게.
+  let base = rows.map(() => 0);
+  for (const [k, col] of [["BTC", "--btc"], ["ETH", "--eth"]]) {
+    const top = rows.map((r, i) => base[i] + (r[k] || 0));
+    const up = top.map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("");
+    const dn = base.map((v, i) => `L${X(base.length - 1 - i).toFixed(1)},${
+      Y(base[base.length - 1 - i]).toFixed(1)}`).join("");
+    svg.appendChild(el("path", { d: up + dn + "Z", fill: cssv(col), opacity: .9,
+      stroke: cssv("--surface-1"), "stroke-width": 2, "stroke-linejoin": "round" }));
+    base = top;
+  }
+
+  [0, rows.length - 1].forEach((i, n, arr) => {
+    if (n && arr[0] === i) return;
+    const t = el("text", { x: X(i), y: H - 7, "text-anchor": i ? "end" : "start",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = md(rows[i].date); svg.appendChild(t);
+  });
+
+  hover(svg, tip, rows, X, W, mL, iw, mT, ih, r =>
+    `<div class="d">${ymd(r.date)}</div>
+     <div class="l"><span style="color:var(--btc)">비트코인</span><b>${fmt(r.BTC)}</b></div>
+     <div class="l"><span style="color:var(--eth)">이더리움</span><b>${fmt(r.ETH)}</b></div>
+     <div class="l" style="margin-top:3px;border-top:1px solid var(--line-soft);padding-top:3px">
+       <span>합계</span><b>${fmt(r.ALL)}</b></div>`);
+}
+
+function lineChart(svg, tip, rows) {
+  svg.innerHTML = "";
+  const [W, H, narrow] = fitBox(svg, 440, 190, 260);
+  const mL = narrow ? 40 : 48, mR = 8, mT = 10, mB = 24;
+  const iw = W - mL - mR, ih = H - mT - mB;
+  const vals = rows.flatMap(r => ["BTC", "ETH"].map(k => r[k]).filter(v => v != null));
+  if (!vals.length) return;
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = (hi - lo) * 0.25 || 0.2; lo = Math.max(0, lo - pad); hi += pad;
+  const X = i => mL + iw * i / Math.max(1, rows.length - 1);
+  const Y = v => mT + ih - (v - lo) / (hi - lo) * ih;
+
+  for (let i = 0; i <= 3; i++) {
+    const v = lo + (hi - lo) * i / 3, yy = Y(v);
+    svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: yy, y2: yy,
+      stroke: cssv("--grid"), "stroke-width": 1 }));
+    const t = el("text", { x: mL - 7, y: yy + 4, "text-anchor": "end",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = v.toFixed(2) + "%"; svg.appendChild(t);
+  }
+  for (const [k, col] of [["BTC", "--btc"], ["ETH", "--eth"]]) {
+    const pts = rows.map((r, i) => [r[k], i]).filter(([v]) => v != null);
+    if (pts.length < 2) continue;
+    svg.appendChild(el("path", {
+      d: pts.map(([v, i], n) => `${n ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(""),
+      fill: "none", stroke: cssv(col), "stroke-width": 2,
+      "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  }
+  [0, rows.length - 1].forEach((i, n, arr) => {
+    if (n && arr[0] === i) return;
+    const t = el("text", { x: X(i), y: H - 7, "text-anchor": i ? "end" : "start",
+      fill: cssv("--text-muted"), "font-size": 10, "font-family": "var(--mono)" });
+    t.textContent = md(rows[i].date); svg.appendChild(t);
+  });
+  hover(svg, tip, rows, X, W, mL, iw, mT, ih, r =>
+    `<div class="d">${ymd(r.date)}</div>
+     <div class="l"><span style="color:var(--btc)">비트코인</span><b>${
+       r.BTC == null ? "—" : r.BTC.toFixed(2) + "%"}</b></div>
+     <div class="l"><span style="color:var(--eth)">이더리움</span><b>${
+       r.ETH == null ? "—" : r.ETH.toFixed(2) + "%"}</b></div>`);
+}
+
+// 두 차트가 같은 방식으로 따라다닌다
+function hover(svg, tip, rows, X, W, mL, iw, mT, ih, html) {
+  const cross = el("line", { y1: mT, y2: mT + ih, stroke: cssv("--text-muted"),
+    "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0 });
+  svg.appendChild(cross);
+  const hit = el("rect", { x: mL, y: mT, width: iw, height: ih, fill: "transparent" });
+  svg.appendChild(hit);
+  hit.addEventListener("pointermove", ev => {
+    const b = svg.getBoundingClientRect();
+    const i = Math.max(0, Math.min(rows.length - 1,
+      Math.round(((ev.clientX - b.left) / b.width * W - mL) / iw * (rows.length - 1))));
+    const xx = X(i);
+    cross.setAttribute("x1", xx); cross.setAttribute("x2", xx); cross.setAttribute("opacity", .6);
+    tip.innerHTML = html(rows[i]);
+    tip.classList.add("on");
+    tip.style.left = Math.min(b.width - 150, Math.max(0, xx / W * b.width - 70)) + "px";
+    tip.style.top = "6px";
+  });
+  hit.addEventListener("pointerleave", () => {
+    tip.classList.remove("on"); cross.setAttribute("opacity", 0);
+  });
 }
 
 // ── 시총 대비 비중 ────────────────────────────────────
@@ -1020,7 +1407,7 @@ function drawPriceChart() {
         ? `<div class="l"><span>종가</span><b style="color:var(--text-muted)">아직 없음</b></div>`
         : `<div class="l"><span>종가</span><b>${price(v, 4)}</b></div>`
           + (chg === null ? "" : `<div class="l"><span>전일 대비</span><b style="color:${
-              chg >= 0 ? "var(--good)" : "var(--bad)"}">${chg >= 0 ? "+" : ""}${chg.toFixed(2)}%</b></div>`))
+              chg >= 0 ? "var(--up)" : "var(--down)"}">${chg >= 0 ? "+" : ""}${chg.toFixed(2)}%</b></div>`))
       + (nd.length ? `<div class="l" style="margin-top:3px;border-top:1px solid var(--line-soft);
           padding-top:3px"><span>속보</span><b>${nd.length}건${
           nd.filter(x => x.importance === 3).length ? " · 중요 " +
@@ -1139,6 +1526,56 @@ function pxHint(nMark) {
     : `지금 보이는 구간에는 속보가 붙은 날이 없습니다. 위의 날짜 버튼을 누르면 그날로 이동합니다. (속보 보유 ${total}일치)`;
 }
 
+// 기간 합계를 펀드별로 줄 세운다
+// 차트 밑 한 줄. 모드를 바꿔도 같이 바뀌어야 하므로 따로 뺀다.
+function flowNote() {
+  const daily = (D.flows || {}).daily || [];
+  const first = daily.length ? daily[0].date : null;
+  $("#flow-chart-note").textContent = !first ? ""
+    : FLOWMODE === "fund"
+      ? `${AUMRANGE_LABEL()} 합계를 펀드별로 줄 세운 것입니다 · ${ymd(first)}부터 수집`
+      : `${ymd(first)}부터 수집 · ${daily.length}일치. 하루에 막대 하나씩 늘어납니다.`;
+}
+
+const AUMRANGE_LABEL = () =>
+  FLOWRANGE === 0 ? "전체 기간" : FLOWRANGE === 365 ? "최근 1년" : `최근 ${FLOWRANGE}일`;
+
+function drawByFund(rows) {
+  const box = $("#flow-fund");
+  const bf = (D.flows || {}).by_fund || {};
+  const days = new Set(rows.map(r => r.date));
+  const sum = {};
+  for (const [d, m] of Object.entries(bf)) {
+    if (!days.has(d)) continue;
+    for (const [t, v] of Object.entries(m)) sum[t] = (sum[t] || 0) + v;
+  }
+  const meta = Object.fromEntries((D.funds || []).map(f => [f.ticker, f]));
+  const list = Object.entries(sum)
+    .filter(([, v]) => v)
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 12);
+
+  if (!list.length) {
+    box.innerHTML = `<div class="cmsg" style="padding:16px 2px">아직 펀드별로 나눌 만큼 쌓이지 않았습니다.</div>`;
+    return;
+  }
+  const max = Math.max(...list.map(([, v]) => Math.abs(v))) || 1;
+  box.innerHTML = list.map(([t, v]) => {
+    const f = meta[t] || {};
+    const w = Math.abs(v) / max * 50;          // 좌우 각각 최대 50%
+    const pos = v >= 0;
+    return `<div class="fbar">
+      <span class="tk3"><i class="dot" style="background:var(--${
+        f.underlying === "ETH" ? "eth" : "btc"})"></i>${t}</span>
+      <span class="track">
+        <i class="zero" style="left:50%"></i>
+        <i class="fill" style="background:var(--${pos ? "up" : "down"});${
+          pos ? `left:50%;width:${w}%` : `right:50%;width:${w}%`}"></i>
+      </span>
+      <span class="val" style="color:var(--${pos ? "up" : "down"})">${signed(v)}</span>
+    </div>`;
+  }).join("");
+}
+
 // ── 펀드 표 ───────────────────────────────────────────
 let TFILTER = "all", TSORT = { k: "aum_usd", dir: -1 };
 $("#tbl-filter").addEventListener("click", e => {
@@ -1235,14 +1672,26 @@ function showDay(day) {
   p.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
+function goto(v) {
+  [...$("#nav").children].forEach(x => x.setAttribute("aria-pressed", x.dataset.v === v));
+  for (const k of ["home", "dash", "news", "comm"])
+    $("#view-" + k).classList.toggle("hidden", k !== v);
+  scrollTo({ top: 0 });
+}
+
+// 홈의 "자세히 보기" 같은 단추들
+addEventListener("click", e => {
+  const b = e.target.closest("[data-go]"); if (!b) return;
+  goto(b.dataset.go);
+  if (b.dataset.go === "news" && !N) loadNews();
+});
+
 $("#nav").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
-  [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", x === b));
-  const news = b.dataset.v === "news";
-  $("#view-dash").classList.toggle("hidden", news);
-  $("#view-news").classList.toggle("hidden", !news);
-  scrollTo({ top: 0 });
-  if (news && !N) loadNews();
+  const v = b.dataset.v;
+  goto(v);
+  if (v === "news" && !N) loadNews();
+  if (v === "comm") loadPosts(true);
 });
 
 $("#news-filter").addEventListener("click", e => {
@@ -1255,7 +1704,7 @@ function loadNews() {
   fetch("./news.json", { cache: "no-store" })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(d => {
-      N = d; _byDay = null; drawFeed();
+      N = d; _byDay = null; drawFeed(); drawHomeNews();
       // 뉴스가 늦게 왔으면 가격 차트를 다시 그려 마커를 붙인다
       if (typeof drawPriceChart === "function" && D) drawPriceChart();
       drawDayChips();
@@ -1278,6 +1727,31 @@ function dayLabel(ymd8) {
   return diff === 0 ? `오늘, ${base}` : diff === 1 ? `어제, ${base}` : base;
 }
 
+// 기사 한 줄. 속보 탭과 홈이 같은 모양을 쓴다.
+function niHTML(r) {
+  const d8 = r.at.slice(0, 8), hh = r.at.slice(8, 10), mm = r.at.slice(10, 12);
+  const tags = (r.coins || []).map(c =>
+    `<span class="coin ${c === "BTC" || c === "ETH" ? c : ""}">${c}</span>`).join("");
+  return `<article class="ni${r.importance === 3 ? " hot" : ""}">
+    <time datetime="${d8}T${hh}:${mm}">${hh}:${mm}</time>
+    <div>
+      <h3><a href="${r.url}" target="_blank" rel="noopener noreferrer nofollow">${esc(r.title)}
+        <span class="ext" aria-label="새 창에서 열림">↗</span></a></h3>
+      <div class="meta"><span class="src">${esc(r.source)}</span>${tags}${
+        r.cat === "econ" ? '<span class="coin">경제</span>' : ""}</div>
+      <div class="acts" data-n="${r.id}" data-t="${esc(r.title)}" data-u="${esc(r.url)}">
+        <button class="act up" data-a="up" aria-pressed="false" aria-label="호재">
+          <span class="ic">▲</span>호재<span class="n"></span></button>
+        <button class="act down" data-a="down" aria-pressed="false" aria-label="악재">
+          <span class="ic">▼</span>악재<span class="n"></span></button>
+        <button class="act cmt" data-a="cmt">댓글 <span class="n"></span></button>
+        <button class="act sh" data-a="share" aria-label="공유">공유</button>
+      </div>
+      <div class="cbox" hidden></div>
+    </div>
+  </article>`;
+}
+
 function drawFeed() {
   if (!N) return;
   const rows = (N.items || []).filter(x => NFILTER === "all" || x.cat === NFILTER);
@@ -1294,26 +1768,7 @@ function drawFeed() {
   for (const r of rows) {
     const d8 = r.at.slice(0, 8);
     if (d8 !== day) { day = d8; out.push(`<div class="daybar">${dayLabel(d8)}</div>`); }
-    const hh = r.at.slice(8, 10), mm = r.at.slice(10, 12);
-    const tags = (r.coins || []).map(c =>
-      `<span class="coin ${c === "BTC" || c === "ETH" ? c : ""}">${c}</span>`).join("");
-    out.push(`<article class="ni${r.importance === 3 ? " hot" : ""}">
-      <time datetime="${d8}T${hh}:${mm}">${hh}:${mm}</time>
-      <div>
-        <h3><a href="${r.url}" target="_blank" rel="noopener noreferrer nofollow">${esc(r.title)}
-          <span class="ext" aria-label="새 창에서 열림">↗</span></a></h3>
-        <div class="meta"><span class="src">${esc(r.source)}</span>${tags}${
-          r.cat === "econ" ? '<span class="coin">경제</span>' : ""}</div>
-        <div class="acts" data-n="${r.id}" data-t="${esc(r.title)}" data-u="${esc(r.url)}">
-          <button class="act up" data-a="up" aria-pressed="false" aria-label="호재">
-            <span class="ic">▲</span>호재<span class="n"></span></button>
-          <button class="act down" data-a="down" aria-pressed="false" aria-label="악재">
-            <span class="ic">▼</span>악재<span class="n"></span></button>
-          <button class="act cmt" data-a="cmt">댓글 <span class="n"></span></button>
-        </div>
-        <div class="cbox" hidden></div>
-      </div>
-    </article>`);
+    out.push(niHTML(r));
   }
   $("#feed").innerHTML = out.join("");
   if (typeof loadCounts === "function") loadCounts();
@@ -1325,7 +1780,8 @@ function esc(s) {
 }
 
 // 대시보드가 뜬 뒤 속보도 미리 받아둔다 — 탭 전환이 즉시 되도록
-addEventListener("load", () => setTimeout(() => { if (!N) loadNews(); }, 400));
+// 홈 화면이 속보를 바로 쓴다. 미룰 이유가 없다.
+addEventListener("load", () => { if (!N) loadNews(); });
 </script>
 <div class="sheet" id="rep-sheet" role="dialog" aria-modal="true" aria-labelledby="rp-h">
   <div class="box wide">
@@ -1376,7 +1832,7 @@ function drawWho() {
       ? ' <button class="lo" id="who-rep" style="color:var(--btc)">신고함</button>' : ""}
     <button class="lo" id="who-out">로그아웃</button>`;
   $("#who-out").onclick = () => api("/api/logout", { method: "POST" })
-    .then(() => { ME = null; VOTED = {}; drawWho(); drawFeed(); });
+    .then(() => { ME = null; VOTED = {}; drawWho(); drawFeed(); drawPosts(); });
   if (ME.admin) $("#who-rep").onclick = openReports;
 }
 
@@ -1403,22 +1859,29 @@ addEventListener("keydown", e => { if (e.key === "Escape") closeLogin(); });
 
 // ── 개수 붙이기 ────────────────────────────────────────────────────────
 // 기사마다 따로 물으면 300번을 부른다. 보이는 것들을 한 번에 묶어 묻는다.
+let COUNTS = null;
+
 function loadCounts() {
   // API 가 없는 자리(로컬 파일로 열었을 때)에서는 투표·댓글 자체를 걷어낸다.
   // 눌리지도 않는 버튼을 남겨 두면 고장난 화면으로 보인다.
-  if (!API) { document.querySelectorAll("#feed .acts, #feed .cbox").forEach(x => x.remove()); return; }
-  const boxes = [...document.querySelectorAll("#feed .acts")];
-  if (!boxes.length) return;
+  if (!API) { document.querySelectorAll(".acts, .cbox").forEach(x => x.remove()); return; }
+  if (!document.querySelector(".acts")) return;
   api("/api/counts")
     .then(d => {
-      VOTED = d.mine || {};
-      for (const b of boxes) {
-        const id = b.dataset.n;
-        setVote(b, VOTED[id] || 0, d.up[id] || 0, d.down[id] || 0);
-        b.querySelector(".cmt .n").textContent = d.comments[id] || "";
-      }
+      COUNTS = d; VOTED = d.mine || {};
+      paintCounts(d);
+      drawHomeHot(d);
     })
     .catch(() => { API = false; loadCounts(); });
+}
+
+// 숫자만 갈아 끼운다. 홈과 속보 탭에 같은 기사가 겹쳐 있어도 둘 다 맞는다.
+function paintCounts(d) {
+  for (const b of document.querySelectorAll(".acts")) {
+    const id = b.dataset.n;
+    setVote(b, (d.mine || {})[id] || 0, d.up[id] || 0, d.down[id] || 0);
+    b.querySelector(".cmt .n").textContent = d.comments[id] || "";
+  }
 }
 
 function setVote(acts, mine, up, down) {
@@ -1430,12 +1893,34 @@ function setVote(acts, mine, up, down) {
 }
 
 // ── 피드에서의 조작 ────────────────────────────────────────────────────
-$("#feed").addEventListener("click", e => {
+// 홈에도 같은 기사 줄이 뜨므로 문서 전체에 한 번만 건다
+document.addEventListener("click", e => {
   const b = e.target.closest(".act"); if (!b) return;
-  const acts = b.closest(".acts"), nid = acts.dataset.n;
+  const acts = b.closest(".acts"); if (!acts) return;
+  const nid = acts.dataset.n;
   if (b.dataset.a === "cmt") return toggleBox(b, acts, nid);
+  if (b.dataset.a === "share") return share(b, acts, nid);
   return vote(acts, nid, b.dataset.a === "up" ? 1 : -1);
 });
+
+// 기사면 원문 주소를, 커뮤니티 글이면 그 글로 곧장 가는 주소를 넘긴다.
+function share(btn, acts, nid) {
+  const title = acts.dataset.t || document.title;
+  const url = acts.dataset.u
+    || `${location.origin}${location.pathname}?p=${nid.slice(1)}`;
+  const done = () => {
+    const old = btn.textContent;
+    btn.textContent = "복사됨";
+    setTimeout(() => { btn.textContent = old; }, 1400);
+  };
+  if (navigator.share) {
+    navigator.share({ title, url }).catch(() => {});
+    return;
+  }
+  (navigator.clipboard
+    ? navigator.clipboard.writeText(url)
+    : Promise.reject()).then(done).catch(() => prompt("이 주소를 복사하세요", url));
+}
 
 function vote(acts, nid, v) {
   if (!ME) return openLogin();
@@ -1443,13 +1928,23 @@ function vote(acts, nid, v) {
   btns.forEach(x => { x.disabled = true; });
   api("/api/vote", { method: "POST", headers: { "Content-Type": "application/json" },
                      body: JSON.stringify({ n: nid, v }) })
-    .then(d => { VOTED[nid] = d.mine; setVote(acts, d.mine, d.up, d.down); })
+    .then(d => {
+      VOTED[nid] = d.mine;
+      // 같은 기사가 홈과 속보에 겹쳐 있을 수 있다. 전부 맞춰 준다.
+      document.querySelectorAll(`.acts[data-n="${nid}"]`)
+        .forEach(a => setVote(a, d.mine, d.up, d.down));
+      if (COUNTS) { COUNTS.up[nid] = d.up; COUNTS.down[nid] = d.down; COUNTS.mine[nid] = d.mine; }
+    })
     .catch(err => { if (err.status === 401) openLogin(); })
     .finally(() => { btns.forEach(x => { x.disabled = false; }); });
 }
 
 function toggleBox(btn, acts, nid) {
-  const box = acts.parentElement.querySelector(".cbox");
+  // 속보는 .acts 와 .cbox 가 형제지만, 게시글은 .acts 가 .foot 안에 있다.
+  // 가장 가까운 기사/글 덩어리에서 찾는다.
+  const root = acts.closest("article") || acts.parentElement;
+  const box = root.querySelector(".cbox");
+  if (!box) return;
   const opening = box.hidden;
   box.hidden = !opening;
   btn.classList.toggle("open", opening);
@@ -1539,10 +2034,109 @@ function bindBox(box, acts, nid) {
 }
 
 function bumpCount(acts, d) {
-  const n = acts.querySelector(".cmt .n");
-  const v = Math.max(0, (Number(n.textContent) || 0) + d);
-  n.textContent = v || "";
+  const nid = acts.dataset.n;
+  const v = Math.max(0, (Number(acts.querySelector(".cmt .n").textContent) || 0) + d);
+  document.querySelectorAll(`.acts[data-n="${nid}"] .cmt .n`)
+    .forEach(n => { n.textContent = v || ""; });
+  if (COUNTS) COUNTS.comments[nid] = v;
 }
+
+// ── 커뮤니티 게시판 ───────────────────────────────────────────────────
+// 글에 붙는 호재/악재·댓글·신고는 속보에 쓰던 것을 그대로 쓴다.
+// 대상 id 만 'p<글번호>' 로 바뀔 뿐이다.
+let POSTS = [], POST_MORE = false, POST_LOADED = false;
+
+function postHTML(r) {
+  const key = "p" + r.id;
+  return `<article class="post" data-id="${r.id}">
+    <h3>${esc(r.title)}</h3>
+    <div class="who"><b>${esc(r.nick)}</b> · ${when(r.at)}</div>
+    ${r.body ? `<div class="bd">${esc(r.body)}</div>` : ""}
+    <div class="foot">
+      <div class="acts" data-n="${key}" data-t="${esc(r.title)}" data-u="">
+        <button class="act up" data-a="up" aria-pressed="false" aria-label="호재">
+          <span class="ic">▲</span>호재<span class="n"></span></button>
+        <button class="act down" data-a="down" aria-pressed="false" aria-label="악재">
+          <span class="ic">▼</span>악재<span class="n"></span></button>
+        <button class="act cmt" data-a="cmt">댓글 <span class="n"></span></button>
+        <button class="act sh" data-a="share" aria-label="공유">공유</button>
+      </div>
+      <div class="tools">${
+        r.mine || (ME && ME.admin)
+          ? `<button data-p="del">삭제</button>`
+          : `<button data-p="rep">신고</button>`}</div>
+    </div>
+    <div class="cbox" hidden></div>
+  </article>`;
+}
+
+function loadPosts(reset) {
+  if (!API) { $("#comm-sub").textContent = "커뮤니티는 배포된 주소에서만 열립니다."; return; }
+  if (reset && POST_LOADED) { drawPosts(); return; }
+  const before = reset ? 0 : (POSTS.length ? POSTS[POSTS.length - 1].id : 0);
+  api("/api/posts" + (before ? "?before=" + before : ""))
+    .then(d => {
+      ME = d.me || ME;
+      POSTS = reset ? d.items : POSTS.concat(d.items);
+      POST_MORE = d.more; POST_LOADED = true;
+      Object.assign(VOTED, d.mine || {});
+      drawPosts();
+    })
+    .catch(() => { $("#comm-sub").textContent = "불러오지 못했습니다."; });
+}
+
+function drawPosts() {
+  const box = $("#comm-list");
+  $("#comm-write").hidden = !ME;
+  $("#comm-sub").textContent = ME
+    ? (POSTS.length ? `${POSTS.length}편` : "아직 아무도 안 썼습니다. 첫 글을 써 보세요.")
+    : "로그인하면 글을 쓸 수 있습니다.";
+  box.innerHTML = POSTS.length
+    ? POSTS.map(postHTML).join("")
+    : `<div class="cmsg" style="padding:18px 2px">아직 글이 없습니다.</div>`;
+  $("#comm-more").hidden = !POST_MORE;
+  for (const r of POSTS) {
+    const a = box.querySelector(`.acts[data-n="p${r.id}"]`);
+    if (a) setVote(a, VOTED["p" + r.id] || 0, r.up, r.down);
+    if (a) a.querySelector(".cmt .n").textContent = r.comments || "";
+  }
+}
+
+$("#comm-more").addEventListener("click", () => loadPosts(false));
+
+$("#pw-send").addEventListener("click", () => {
+  const t = $("#pw-title"), b = $("#pw-body"), msg = $("#pw-msg"), btn = $("#pw-send");
+  const say = (x, bad) => { msg.textContent = x || ""; msg.className = "cmsg" + (bad ? " bad" : ""); };
+  if (!t.value.trim()) return say("제목을 써 주세요.", true);
+  btn.disabled = true; say("");
+  api("/api/posts", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: t.value, body: b.value }) })
+    .then(d => { t.value = ""; b.value = ""; POSTS.unshift(d.item); drawPosts(); })
+    .catch(err => { say(err.message || "올리지 못했습니다.", true);
+                    if (err.status === 401) openLogin(); })
+    .finally(() => { btn.disabled = false; });
+});
+
+// 글의 삭제·신고
+$("#comm-list").addEventListener("click", e => {
+  const b = e.target.closest("button[data-p]"); if (!b) return;
+  const card = b.closest(".post"), id = Number(card.dataset.id);
+  if (b.dataset.p === "del") {
+    if (!confirm("이 글을 지울까요?")) return;
+    api(`/api/posts?id=${id}`, { method: "DELETE" })
+      .then(() => { POSTS = POSTS.filter(x => x.id !== id); drawPosts(); })
+      .catch(err => alert(err.message || "지우지 못했습니다."));
+    return;
+  }
+  if (!ME) return openLogin();
+  const reason = prompt("신고 사유를 간단히 적어주세요 (선택)");
+  if (reason === null) return;
+  api("/api/report", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, reason, kind: "p" }) })
+    .then(d => { alert(d.hidden ? "신고가 접수되어 이 글은 가려졌습니다." : "신고가 접수되었습니다.");
+                 if (d.hidden) loadPosts(true); })
+    .catch(err => alert(err.message || "신고하지 못했습니다."));
+});
 
 // ── 신고함 (관리자) ───────────────────────────────────────────────────
 function openReports() {
@@ -1558,7 +2152,7 @@ $("#rep-sheet").addEventListener("click", e => {
   const payload = b.dataset.w === "block" || b.dataset.w === "unblock"
     ? { what: b.dataset.w, user: card.dataset.user,
         reason: b.dataset.w === "block" ? (prompt("차단 사유 (선택)") || "") : "" }
-    : { what: b.dataset.w, id: Number(card.dataset.id) };
+    : { what: b.dataset.w, id: Number(card.dataset.id), kind: card.dataset.kind || "c" };
   api("/api/admin/act", { method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload) })
     .then(() => loadReports())
@@ -1571,18 +2165,30 @@ function loadReports() {
   box.innerHTML = `<div class="cmsg">불러오는 중…</div>`;
   api("/api/admin/reports")
     .then(d => {
-      const it = d.items || [];
-      if (!it.length) { box.innerHTML = `<div class="cmsg">처리할 신고가 없습니다.</div>`; return; }
-      box.innerHTML = it.map(r => `<div class="rp${r.deleted ? " gone" : ""}"
-          data-id="${r.id}" data-user="${esc(r.user_id)}">
+      const it = d.items || [], ps = d.posts || [];
+      if (!it.length && !ps.length) {
+        box.innerHTML = `<div class="cmsg">처리할 신고가 없습니다.</div>`; return;
+      }
+      box.innerHTML =
+        (ps.length ? `<div class="lbl" style="margin:2px 0 8px">게시글 ${ps.length}건</div>`
+          + ps.map(r => rpCard(r, "p")).join("") : "")
+        + (it.length ? `<div class="lbl" style="margin:14px 0 8px">댓글 ${it.length}건</div>`
+          + it.map(r => rpCard(r, "c")).join("") : "");
+    })
+    .catch(err => { box.innerHTML = `<div class="cmsg bad">${esc(err.message || "불러오지 못했습니다.")}</div>`; });
+}
+
+function rpCard(r, kind) {
+  return `<div class="rp${r.deleted ? " gone" : ""}"
+          data-id="${r.id}" data-kind="${kind}" data-user="${esc(r.user_id)}">
         <div class="top">
           <span><b>${esc(r.nick)}</b>${r.blocked ? " · 차단됨" : ""} · ${when(r.created)}${
             r.deleted ? ` · 가려짐(${r.del_by === "reported" ? "신고 누적" : "관리자"})` : ""}</span>
           <span class="cnt">신고 ${r.reports}건</span>
         </div>
-        <div class="bd">${esc(r.body)}</div>
+        <div class="bd">${kind === "p" ? esc(r.title) + "\n" : ""}${esc(r.body)}</div>
         ${r.reasons ? `<div class="art why">사유 — ${esc(r.reasons)}</div>` : ""}
-        <div class="art">${esc(r.news_title || "(기사 정보 없음)")}</div>
+        <div class="art">${kind === "p" ? "커뮤니티 글" : esc(r.news_title || "(기사 정보 없음)")}</div>
         <div class="row2">
           ${r.deleted
             ? `<button class="btn" data-w="restore">되살리기</button>`
@@ -1592,9 +2198,7 @@ function loadReports() {
             ? `<button class="btn" data-w="unblock">차단 풀기</button>`
             : `<button class="btn" data-w="block">이용자 차단</button>`}
         </div>
-      </div>`).join("");
-    })
-    .catch(err => { box.innerHTML = `<div class="cmsg bad">${esc(err.message || "불러오지 못했습니다.")}</div>`; });
+      </div>`;
 }
 
 // "3분 전" — 몇 시 몇 분보다 이쪽이 읽힌다
@@ -1613,8 +2217,19 @@ function when(ms) {
   const err = q.get("login_error");
   const claim = q.get("admin");
 
+  const jump = q.get("p");
+
   loadMe().then(() => {
     if (err) alert(err);
+    if (jump && /^[0-9]{1,12}$/.test(jump)) {
+      goto("comm");
+      loadPosts(true);
+      setTimeout(() => {
+        const el2 = document.querySelector(`#comm-list .post[data-id="${jump}"]`);
+        if (el2) { el2.scrollIntoView({ block: "center" }); el2.style.outline = "2px solid var(--eth)"; }
+      }, 900);
+      history.replaceState(null, "", location.pathname);
+    }
     if (claim && ME) {
       api("/api/admin/claim", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: claim }) })

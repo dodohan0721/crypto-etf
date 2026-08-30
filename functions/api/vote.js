@@ -1,4 +1,4 @@
-import { me, json, setupError } from "../_lib.js";
+import { me, json, setupError, TARGET } from "../_lib.js";
 
 // POST /api/vote { n, v }   v = 1(호재) | -1(악재)
 //
@@ -15,7 +15,7 @@ export async function onRequestPost({ request, env }) {
   try { b = await request.json(); } catch (e) {}
   const nid = String(b.n || "").trim();
   const v = Number(b.v);
-  if (!/^[0-9a-f]{6,40}$/.test(nid)) return json({ error: "bad_news_id" }, 400);
+  if (!TARGET.test(nid)) return json({ error: "bad_news_id" }, 400);
   if (v !== 1 && v !== -1) return json({ error: "bad_vote" }, 400);
 
   const cur = await env.DB.prepare(
