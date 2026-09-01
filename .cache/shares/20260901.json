@@ -8,14 +8,13 @@
    "kind": "spot",
    "issuer": "BlackRock",
    "name": "iShares Bitcoin Trust",
-   "last": 44.0896,
-   "shares": 1373240000.0,
-   "aum_usd": 60545602304.0,
-   "tvol": 42438154.0,
-   "px_source": "종가 20260901",
+   "last": 43.7,
+   "shares": 1372480000.0,
+   "aum_usd": 59977376000.00001,
+   "tvol": 29071455.0,
+   "px_source": "실시간",
    "isin": "US46438F1012",
-   "eng_name": "ISHARES BITCOIN TRUST ETF",
-   "shares_from": "20260831"
+   "eng_name": "ISHARES BITCOIN TRUST ETF"
   },
   "FBTC": {
    "ticker": "FBTC",
@@ -24,14 +23,13 @@
    "kind": "spot",
    "issuer": "Fidelity",
    "name": "Fidelity Wise Origin Bitcoin",
-   "last": 67.65,
+   "last": 67.1046,
    "shares": 201578000.0,
-   "aum_usd": 13636751700.000002,
-   "tvol": 2438310.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 13526811058.800001,
+   "tvol": 1316061.0,
+   "px_source": "실시간",
    "isin": "US3159481098",
-   "eng_name": "FIDELITY WISE ORIGIN BITCOIN FD SHARES OF BENEFICIAL INTERES",
-   "shares_from": "20260831"
+   "eng_name": "FIDELITY WISE ORIGIN BITCOIN FD SHARES OF BENEFICIAL INTERES"
   },
   "GBTC": {
    "ticker": "GBTC",
@@ -40,14 +38,13 @@
    "kind": "spot",
    "issuer": "Grayscale",
    "name": "Grayscale Bitcoin Trust",
-   "last": 60.27,
+   "last": 60.0154,
    "shares": 168670000.0,
-   "aum_usd": 10165740900.0,
-   "tvol": 1193171.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 10122797518.0,
+   "tvol": 613016.0,
+   "px_source": "실시간",
    "isin": "US3896371099",
-   "eng_name": "GRAYSCALE BITCOIN TRUST ETF",
-   "shares_from": "20260831"
+   "eng_name": "GRAYSCALE BITCOIN TRUST ETF"
   },
   "BTC": {
    "ticker": "BTC",
@@ -56,14 +53,13 @@
    "kind": "spot",
    "issuer": "Grayscale",
    "name": "Grayscale Bitcoin Mini Trust",
-   "last": 34.8,
+   "last": 34.35,
    "shares": 139720000.0,
-   "aum_usd": 4862256000.0,
-   "tvol": 2455888.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 4799382000.0,
+   "tvol": 830916.0,
+   "px_source": "실시간",
    "isin": "US3899302075",
-   "eng_name": "GRAYSCALE BITCOIN MINI TRUST ETF",
-   "shares_from": "20260831"
+   "eng_name": "GRAYSCALE BITCOIN MINI TRUST ETF"
   },
   "BITB": {
    "ticker": "BITB",
@@ -72,14 +68,13 @@
    "kind": "spot",
    "issuer": "Bitwise",
    "name": "Bitwise Bitcoin ETF",
-   "last": 42.65,
-   "shares": 70560000.0,
-   "aum_usd": 3009384000.0,
-   "tvol": 1091488.0,
-   "px_source": "종가 20260901",
+   "last": 41.72,
+   "shares": 69380000.0,
+   "aum_usd": 2894533600.0,
+   "tvol": 347808.0,
+   "px_source": "실시간",
    "isin": "US09174C1045",
-   "eng_name": "BITWISE BITCOIN ETF COMMON SHARES OF BENEFICIAL INTEREST",
-   "shares_from": "20260831"
+   "eng_name": "BITWISE BITCOIN ETF COMMON SHARES OF BENEFICIAL INTEREST"
   },
   "ARKB": {
    "ticker": "ARKB",
@@ -88,14 +83,13 @@
    "kind": "spot",
    "issuer": "ARK/21Shares",
    "name": "ARK 21Shares Bitcoin ETF",
-   "last": 25.83,
-   "shares": 106870000.0,
-   "aum_usd": 2760452100.0,
-   "tvol": 1071951.0,
-   "px_source": "종가 20260901",
+   "last": 25.7,
+   "shares": 102405000.0,
+   "aum_usd": 2631808500.0,
+   "tvol": 421836.0,
+   "px_source": "실시간",
    "isin": "US0409191022",
-   "eng_name": "ARK 21SHARES BITCOIN ETF SHS BEN INT",
-   "shares_from": "20260831"
+   "eng_name": "ARK 21SHARES BITCOIN ETF SHS BEN INT"
   },
   "BTCO": {
    "ticker": "BTCO",
@@ -104,14 +98,13 @@
    "kind": "spot",
    "issuer": "Invesco",
    "name": "Invesco Galaxy Bitcoin ETF",
-   "last": 78.44,
+   "last": 76.65,
    "shares": 5190000.0,
-   "aum_usd": 407103600.0,
-   "tvol": 20947.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 397813500.0,
+   "tvol": 16669.0,
+   "px_source": "실시간",
    "isin": "US46091J1016",
-   "eng_name": "INVESCO GALAXY BITCOIN ETF COM SHS BEN INT",
-   "shares_from": "20260831"
+   "eng_name": "INVESCO GALAXY BITCOIN ETF COM SHS BEN INT"
   },
   "EZBC": {
    "ticker": "EZBC",
@@ -120,14 +113,13 @@
    "kind": "spot",
    "issuer": "Franklin",
    "name": "Franklin Bitcoin ETF",
-   "last": 45.56,
+   "last": 44.63,
    "shares": 9500000.0,
-   "aum_usd": 432820000.0,
-   "tvol": 133027.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 423985000.0,
+   "tvol": 53897.0,
+   "px_source": "실시간",
    "isin": "US3549211080",
-   "eng_name": "FRANKLIN TEMPLETON DIGITAL HLDGS TR BITCOIN ETF SHS",
-   "shares_from": "20260831"
+   "eng_name": "FRANKLIN TEMPLETON DIGITAL HLDGS TR BITCOIN ETF SHS"
   },
   "BRRR": {
    "ticker": "BRRR",
@@ -136,14 +128,13 @@
    "kind": "spot",
    "issuer": "CoinShares",
    "name": "CoinShares Bitcoin ETF",
-   "last": 22.23,
-   "shares": 20395000.0,
-   "aum_usd": 453380850.0,
-   "tvol": 51040.0,
-   "px_source": "종가 20260901",
+   "last": 21.81,
+   "shares": 20345000.0,
+   "aum_usd": 443724450.0,
+   "tvol": 24886.0,
+   "px_source": "실시간",
    "isin": "US91916J1007",
-   "eng_name": "COINSHARES BITCOIN ETF",
-   "shares_from": "20260831"
+   "eng_name": "COINSHARES BITCOIN ETF"
   },
   "HODL": {
    "ticker": "HODL",
@@ -152,14 +143,13 @@
    "kind": "spot",
    "issuer": "VanEck",
    "name": "VanEck Bitcoin ETF",
-   "last": 22.01,
-   "shares": 54875000.0,
-   "aum_usd": 1207798750.0,
-   "tvol": 2352404.0,
-   "px_source": "종가 20260901",
+   "last": 21.9376,
+   "shares": 54275000.0,
+   "aum_usd": 1190663240.0,
+   "tvol": 275119.0,
+   "px_source": "실시간",
    "isin": "US92189K1051",
-   "eng_name": "VANECK BITCOIN ETF",
-   "shares_from": "20260831"
+   "eng_name": "VANECK BITCOIN ETF"
   },
   "BTCW": {
    "ticker": "BTCW",
@@ -168,14 +158,13 @@
    "kind": "spot",
    "issuer": "WisdomTree",
    "name": "WisdomTree Bitcoin Fund",
-   "last": 83.0777,
+   "last": 81.92,
    "shares": 2050000.0,
-   "aum_usd": 170309285.0,
-   "tvol": 7039.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 167936000.0,
+   "tvol": 1060.0,
+   "px_source": "실시간",
    "isin": "US97720F1012",
-   "eng_name": "WISDOMTREE BITCOIN FUND SHS BEN INT",
-   "shares_from": "20260831"
+   "eng_name": "WISDOMTREE BITCOIN FUND SHS BEN INT"
   },
   "BITO": {
    "ticker": "BITO",
@@ -184,14 +173,13 @@
    "kind": "strat",
    "issuer": "ProShares",
    "name": "ProShares Bitcoin Strategy",
-   "last": 10.4784,
-   "shares": 156840000.0,
-   "aum_usd": 1643432256.0,
-   "tvol": 83005379.0,
-   "px_source": "종가 20260901",
+   "last": 10.3805,
+   "shares": 155850000.0,
+   "aum_usd": 1617800925.0,
+   "tvol": 34733069.0,
+   "px_source": "실시간",
    "isin": "US74347G4405",
-   "eng_name": "PROSHARES BITCOIN ETF",
-   "shares_from": "20260831"
+   "eng_name": "PROSHARES BITCOIN ETF"
   },
   "BITS": {
    "ticker": "BITS",
@@ -200,14 +188,13 @@
    "kind": "strat",
    "issuer": "Global X",
    "name": "Global X Blockchain & Bitcoin",
-   "last": 64.421,
-   "shares": 397122.0,
-   "aum_usd": 25582996.362000003,
-   "tvol": 1246.0,
-   "px_source": "종가 20260901",
+   "last": 62.48,
+   "shares": 397094.0,
+   "aum_usd": 24810433.119999997,
+   "tvol": 504.0,
+   "px_source": "실시간",
    "isin": "US37960A7274",
-   "eng_name": "GLOBAL X FDS BLOCKCHAIN & BITCOIN STRATEGY ETF (P/S)",
-   "shares_from": "20260831"
+   "eng_name": "GLOBAL X FDS BLOCKCHAIN & BITCOIN STRATEGY ETF (P/S)"
   },
   "ETHA": {
    "ticker": "ETHA",
@@ -216,14 +203,13 @@
    "kind": "spot",
    "issuer": "BlackRock",
    "name": "iShares Ethereum Trust",
-   "last": 18.51,
-   "shares": 455960000.0,
-   "aum_usd": 8439819600.000001,
-   "tvol": 30909216.0,
-   "px_source": "종가 20260901",
+   "last": 18.23,
+   "shares": 460520000.0,
+   "aum_usd": 8395279600.0,
+   "tvol": 20798841.0,
+   "px_source": "실시간",
    "isin": "US46438R1059",
-   "eng_name": "ISHARES ETHEREUM TRUST ETF",
-   "shares_from": "20260831"
+   "eng_name": "ISHARES ETHEREUM TRUST ETF"
   },
   "ETHE": {
    "ticker": "ETHE",
@@ -232,14 +218,13 @@
    "kind": "spot",
    "issuer": "Grayscale",
    "name": "Grayscale Ethereum Trust",
-   "last": 19.7199,
+   "last": 19.3313,
    "shares": 94598500.0,
-   "aum_usd": 1865472960.1499999,
-   "tvol": 1601186.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 1828711983.05,
+   "tvol": 990672.0,
+   "px_source": "실시간",
    "isin": "US3896381072",
-   "eng_name": "GRAYSCALE ETHEREUM STAKING ETF",
-   "shares_from": "20260831"
+   "eng_name": "GRAYSCALE ETHEREUM STAKING ETF"
   },
   "FETH": {
    "ticker": "FETH",
@@ -248,14 +233,13 @@
    "kind": "spot",
    "issuer": "Fidelity",
    "name": "Fidelity Ethereum Fund",
-   "last": 24.374,
-   "shares": 55750000.0,
-   "aum_usd": 1358850500.0,
-   "tvol": 1403074.0,
-   "px_source": "종가 20260901",
+   "last": 24.1482,
+   "shares": 54750000.0,
+   "aum_usd": 1322113950.0,
+   "tvol": 801788.0,
+   "px_source": "실시간",
    "isin": "US31613E1038",
-   "eng_name": "FIDELITY ETHEREUM FUND",
-   "shares_from": "20260831"
+   "eng_name": "FIDELITY ETHEREUM FUND"
   },
   "ETHW": {
    "ticker": "ETHW",
@@ -264,14 +248,13 @@
    "kind": "spot",
    "issuer": "Bitwise",
    "name": "Bitwise Ethereum ETF",
-   "last": 17.4447,
+   "last": 17.5,
    "shares": 15460000.0,
-   "aum_usd": 269695062.0,
-   "tvol": 971589.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 270550000.0,
+   "tvol": 476048.0,
+   "px_source": "실시간",
    "isin": "US0919551046",
-   "eng_name": "BITWISE ETHEREUM ETF",
-   "shares_from": "20260831"
+   "eng_name": "BITWISE ETHEREUM ETF"
   },
   "QETH": {
    "ticker": "QETH",
@@ -280,14 +263,13 @@
    "kind": "spot",
    "issuer": "Invesco",
    "name": "Invesco Galaxy Ethereum ETF",
-   "last": 24.7,
+   "last": 24.04,
    "shares": 913000.0,
-   "aum_usd": 22551100.0,
-   "tvol": 64629.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 21948520.0,
+   "tvol": 18869.0,
+   "px_source": "실시간",
    "isin": "US46148D1072",
-   "eng_name": "INVESCO GALAXY ETHEREUM ETF",
-   "shares_from": "20260831"
+   "eng_name": "INVESCO GALAXY ETHEREUM ETF"
   },
   "EZET": {
    "ticker": "EZET",
@@ -296,14 +278,13 @@
    "kind": "spot",
    "issuer": "Franklin",
    "name": "Franklin Ethereum ETF",
-   "last": 18.81,
+   "last": 18.27,
    "shares": 2800000.0,
-   "aum_usd": 52668000.0,
-   "tvol": 32741.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 51156000.0,
+   "tvol": 14420.0,
+   "px_source": "실시간",
    "isin": "US35351J1097",
-   "eng_name": "FRANKLIN ETHEREUM ETF",
-   "shares_from": "20260831"
+   "eng_name": "FRANKLIN ETHEREUM ETF"
   },
   "ETH": {
    "ticker": "ETH",
@@ -312,14 +293,13 @@
    "kind": "spot",
    "issuer": "Grayscale",
    "name": "Grayscale Ethereum Mini Trust",
-   "last": 23.4,
+   "last": 23.12,
    "shares": 93180800.0,
-   "aum_usd": 2180430720.0,
-   "tvol": 2232617.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 2154340096.0,
+   "tvol": 1086929.0,
+   "px_source": "실시간",
    "isin": "US38964R2031",
-   "eng_name": "GRAYSCALE ETHEREUM STAKING MINI ETF",
-   "shares_from": "20260831"
+   "eng_name": "GRAYSCALE ETHEREUM STAKING MINI ETF"
   },
   "ETHV": {
    "ticker": "ETHV",
@@ -328,16 +308,15 @@
    "kind": "spot",
    "issuer": "VanEck",
    "name": "VanEck Ethereum ETF",
-   "last": 36.29,
+   "last": 35.39,
    "shares": 3500000.0,
-   "aum_usd": 127015000.0,
-   "tvol": 36095.0,
-   "px_source": "종가 20260901",
+   "aum_usd": 123865000.0,
+   "tvol": 14120.0,
+   "px_source": "실시간",
    "isin": "US92189L1035",
-   "eng_name": "VANECK ETHEREUM ETF",
-   "shares_from": "20260831"
+   "eng_name": "VANECK ETHEREUM ETF"
   }
  },
  "carried": 0,
- "partial": 21
+ "partial": 0
 }
