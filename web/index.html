@@ -2499,7 +2499,7 @@ const SECTORS = [
 ];
 const SECMAP = Object.fromEntries(SECTORS.map(s => [s.k, s]));
 
-const UP = "https://api.upbit.com/v1";
+const UP_DIRECT = "https://api.upbit.com/v1";
 let MK = null;      // {SYM:{ko, mk}}    업비트 원화마켓 전체
 let TK = null;      // {SYM:{p, ch, val}} 현재가·등락률·24h 거래대금
 let SEC_CUR = null, SEC_TIMER = null, SEC_BUSY = false;
@@ -2536,31 +2536,42 @@ const cprice = v => {
 const pct2 = c => (c >= 0 ? "+" : "−") + Math.abs(c).toFixed(2) + "%";
 const upcls = c => c > 0 ? "up" : c < 0 ? "down" : "text-muted";
 
-// 업비트는 초당 호출 제한이 빡빡하다. 막히면 CORS 헤더가 없는 응답이 돌아와서
-// 브라우저에는 상태코드도 없이 "Failed to fetch" 로만 보인다(2026-09-02 실측).
-// 그래서 (1) 호출을 한 줄로 세워 1.1초 이상 띄우고 (2) 실패하면 물러섰다 두 번 더 두드린다.
-const UP_GAP = 1100;
+// 업비트를 브라우저가 직접 부르면 응답에 CORS 헤더가 붙었다 안 붙었다 한다.
+// 2026-09-02 실측 — 같은 URL 12번 중 2번만 성공, no-cors 로는 8/8 성공.
+// 요청은 닿는데 Access-Control-Allow-Origin 이 빠진 응답이 절반쯤 온다.
+// 그래서 우리 서버(/api/up)를 앞에 세우고, 그쪽이 죽으면 직접 호출로 번갈아 두드린다.
+const UP_GAP = 300;
 let _upQ = Promise.resolve(), _upAt = 0;
 
-function upGet(path, tries = 3) {
+function upURL(p) {
+  const [path, qs] = p.replace(/^\//, "").split("?");
+  return "/api/up?path=" + encodeURIComponent(path) + (qs ? "&" + qs : "");
+}
+
+function upGet(p, tries = 4) {
   const run = async () => {
     let last;
     for (let i = 0; i < tries; i++) {
       const wait = UP_GAP - (Date.now() - _upAt);
       if (wait > 0) await new Promise(r => setTimeout(r, wait));
       _upAt = Date.now();
+      // 짝수 번째는 우리 서버 경유, 홀수 번째는 업비트 직접 — 한쪽이 막혀도 뚫린다
+      const url = (i % 2 === 0) ? upURL(p) : UP_DIRECT + p;
       try {
-        const r = await fetch(UP + path, { cache: "no-store" });
+        const r = await fetch(url, { cache: "no-store" });
         if (r.ok) return r.json();
         last = new Error("업비트 " + r.status);
-      } catch (e) { last = e; }
-      await new Promise(r => setTimeout(r, 900 * (i + 1)));
+        await new Promise(z => setTimeout(z, 700 * (i + 1)));   // 진짜 제한이면 물러선다
+      } catch (e) {
+        last = e;
+        await new Promise(z => setTimeout(z, 250));             // 끊긴 거면 바로 다시
+      }
     }
     throw last || new Error("업비트 응답 없음");
   };
-  const p = _upQ.catch(() => {}).then(run);   // 앞 호출이 깨져도 줄은 계속 흐른다
-  _upQ = p.catch(() => {});
-  return p;
+  const q = _upQ.catch(() => {}).then(run);   // 앞 호출이 깨져도 줄은 계속 흐른다
+  _upQ = q.catch(() => {});
+  return q;
 }
 
 // ── 시세 받아오기 ──────────────────────────────────────
