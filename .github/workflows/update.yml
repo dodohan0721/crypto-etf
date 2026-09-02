@@ -6,7 +6,7 @@ name: 크립토 ETF 갱신
 # 그래서 크론은 하루 세 번만 쓰고, 실행된 작업 안에서 반복한다.
 #
 #   ETF 집계는 미국 장이 닫힌 뒤 한 번이면 된다.
-#   속보는 하루 종일 들어오므로 작업 안에서 20분마다 다시 긁는다.
+#   속보는 하루 종일 들어오므로 작업 안에서 10분마다 다시 긁는다.
 #
 #   07:00 시작 → 루프 → (13:00 새 작업이 이어받음) → 19:00 → 다음 날 07:00
 # ──────────────────────────────────────────────────────────────────────────
@@ -20,7 +20,7 @@ on:
       interval:
         description: "속보 갱신 간격(초)"
         required: false
-        default: "1200"
+        default: "600"
       hours:
         description: "몇 시간 동안 돌릴지"
         required: false
@@ -83,7 +83,7 @@ jobs:
           NAVER_CLIENT_SECRET:   ${{ secrets.NAVER_CLIENT_SECRET }}
           CLOUDFLARE_API_TOKEN:  ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          INTERVAL: ${{ github.event.inputs.interval || '1200' }}
+          INTERVAL: ${{ github.event.inputs.interval || '600' }}
           HOURS:    ${{ github.event.inputs.hours    || '5.5' }}
         run: |
           END=$(( $(date +%s) + $(python3 -c "print(int(float('$HOURS')*3600))") ))

@@ -118,6 +118,16 @@ def build(verbose=True):
     # 선물·전략형은 현물을 들고 있지 않으므로 넣으면 과대계상된다.
     pct = {}
     mcap = mk.get("mcap_usd") or {}
+
+    # 김치프리미엄 — 국내가가 해외가보다 얼마나 비싼가.
+    # 화면은 브라우저에서 실시간으로 다시 계산한다. 이건 그게 막혔을 때 쓸 대비책이다.
+    kimchi = {}
+    _fx = (mk.get("fx") or {}).get("rate")
+    for _c in ("BTC", "ETH"):
+        _k = ((mk.get("krw") or {}).get(_c) or {}).get("price_krw")
+        _u = ((mk.get("usd") or {}).get(_c) or {}).get("price_usd")
+        if _k and _u and _fx:
+            kimchi[_c] = round((_k / (_u * _fx) - 1) * 100, 2)
     aum_daily, pct_daily = aum_history(
         {k: v for k, v in (mk.get("supply") or {}).items() if not k.startswith("_")},
         mk.get("history") or {})
@@ -153,7 +163,7 @@ def build(verbose=True):
         "coins": {
             "krw": mk.get("krw"), "usd": mk.get("usd"),
             "supply": {k: v for k, v in (mk.get("supply") or {}).items() if not k.startswith("_")},
-            "mcap_usd": mcap, "usd_source": mk.get("usd_source"),
+            "mcap_usd": mcap, "usd_source": mk.get("usd_source"), "kimchi": kimchi,
             # 순유입 막대 위에 겹쳐 그릴 코인 일별 종가(달러)
             "history": mk.get("history") or {},
         },
@@ -209,6 +219,8 @@ def build(verbose=True):
               f" · 합계 ${aum_all/1e9:,.1f}B")
         print(f"  현물만      BTC ${aum_spot['BTC']/1e9:,.1f}B · ETH ${aum_spot['ETH']/1e9:,.1f}B"
               f" · 합계 ${aum_spot_all/1e9:,.1f}B")
+        if kimchi:
+            print("  김치프리미엄 " + " · ".join(f"{k} {v:+.2f}%" for k, v in kimchi.items()))
         if pct:
             print("  시총 대비   " + " · ".join(f"{k} {v}%" for k, v in pct.items())
                   + "   (현물 ETF 기준)")
