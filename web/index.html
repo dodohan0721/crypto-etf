@@ -2536,10 +2536,31 @@ const cprice = v => {
 const pct2 = c => (c >= 0 ? "+" : "−") + Math.abs(c).toFixed(2) + "%";
 const upcls = c => c > 0 ? "up" : c < 0 ? "down" : "text-muted";
 
-async function upGet(path) {
-  const r = await fetch(UP + path, { cache: "no-store" });
-  if (!r.ok) throw new Error("업비트 " + r.status);
-  return r.json();
+// 업비트는 초당 호출 제한이 빡빡하다. 막히면 CORS 헤더가 없는 응답이 돌아와서
+// 브라우저에는 상태코드도 없이 "Failed to fetch" 로만 보인다(2026-09-02 실측).
+// 그래서 (1) 호출을 한 줄로 세워 1.1초 이상 띄우고 (2) 실패하면 물러섰다 두 번 더 두드린다.
+const UP_GAP = 1100;
+let _upQ = Promise.resolve(), _upAt = 0;
+
+function upGet(path, tries = 3) {
+  const run = async () => {
+    let last;
+    for (let i = 0; i < tries; i++) {
+      const wait = UP_GAP - (Date.now() - _upAt);
+      if (wait > 0) await new Promise(r => setTimeout(r, wait));
+      _upAt = Date.now();
+      try {
+        const r = await fetch(UP + path, { cache: "no-store" });
+        if (r.ok) return r.json();
+        last = new Error("업비트 " + r.status);
+      } catch (e) { last = e; }
+      await new Promise(r => setTimeout(r, 900 * (i + 1)));
+    }
+    throw last || new Error("업비트 응답 없음");
+  };
+  const p = _upQ.catch(() => {}).then(run);   // 앞 호출이 깨져도 줄은 계속 흐른다
+  _upQ = p.catch(() => {});
+  return p;
 }
 
 // ── 시세 받아오기 ──────────────────────────────────────
@@ -2556,17 +2577,17 @@ async function loadMarkets() {
 
 async function loadTickers() {
   await loadMarkets();
+  // 원화마켓 300종 가까이를 한 번에 받는다. URL 은 2.6KB 지만 업비트가 받아준다 —
+  // 100개씩 나눠 세 번 부르면 오히려 호출 제한에 걸린다(실측).
   const all = Object.values(MK).map(m => m.mk);
+  const d = await upGet("/ticker?markets=" + all.join(","));
   const out = {};
-  for (let i = 0; i < all.length; i += 100) {          // URL 길이 · 유량 모두 고려
-    const d = await upGet("/ticker?markets=" + all.slice(i, i + 100).join(","));
-    for (const r of d)
-      out[r.market.slice(4)] = {
-        p: r.trade_price,
-        ch: (r.signed_change_rate || 0) * 100,
-        val: r.acc_trade_price_24h || 0,
-      };
-  }
+  for (const r of d)
+    out[r.market.slice(4)] = {
+      p: r.trade_price,
+      ch: (r.signed_change_rate || 0) * 100,
+      val: r.acc_trade_price_24h || 0,
+    };
   TK = out;
   return TK;
 }
@@ -2594,17 +2615,17 @@ function secStat(key) {
 // 알트코인 유통량을 공짜로 주는 곳이 없다 — 그래서 동일가중이라고 밝히고 쓴다.
 async function loadSpark(key) {
   if (SPK[key]) return SPK[key];
-  const m = members(key, true).slice(0, 10);
+  // 호출당 1.1초씩 줄을 서므로 종목 수가 곧 대기 시간이다. 여섯이면 7초 안에 채워진다.
+  const m = members(key, true).slice(0, 6);
   if (!m.length) return null;
   const series = [];
   for (const c of m) {
     try {
-      const d = await upGet(`/candles/minutes/60?market=KRW-${c}&count=24`);
+      const d = await upGet(`/candles/minutes/60?market=KRW-${c}&count=24`, 2);
       if (d && d.length >= 6) series.push(d.slice().reverse());   // 옛것 → 최근
     } catch (e) { /* 한 종목 실패는 무시한다 */ }
-    await new Promise(r => setTimeout(r, 110));                   // 초당 10건 제한
   }
-  if (!series.length) return null;
+  if (series.length < 2) return null;      // 한 종목짜리 '지수'는 지수가 아니다
   const len = Math.min(...series.map(s => s.length));
   const out = [];
   for (let i = 0; i < len; i++) {
@@ -2760,7 +2781,8 @@ async function loadCoinView(force) {
     drawCoinFlow();
   } catch (e) {
     $("#sec-list").innerHTML = `<p class="hint" style="padding:14px 0">
-      업비트 시세를 불러오지 못했습니다 (${(e.message || "").slice(0, 40)}).
+      업비트 시세를 불러오지 못했습니다. 잠시 뒤 다시 시도해 주세요.
+      <span class="muted">(${(e.message || "").slice(0, 40)})</span>
       <button class="btn" id="sec-retry" style="margin-left:8px">다시 시도</button></p>`;
   } finally { SEC_BUSY = false; }
   loadWhale().catch(() => {});     // 막히는 망에서는 그냥 접는다
