@@ -5,7 +5,7 @@
 브라우저는 이 파일만 읽는다. 서버는 없다.
 """
 import os, json, datetime, collections
-import etf, market
+import etf, market, night
 from funds import BY_TICKER
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -73,6 +73,14 @@ def aum_history(supply, price_hist):
 def build(verbose=True):
     r  = etf.run(verbose)
     mk = market.collect(verbose)
+
+    # 밤사이 한국증시(EWY) — web/night.json 을 따로 떨군다.
+    # 여기서 부르는 이유는 하나다. 이 단계에만 한투 키가 들어와 있다.
+    # 실패해도 ETF 집계는 그대로 간다 — 화면은 파일이 없으면 그 칸을 접는다.
+    try:
+        night.collect(verbose)
+    except Exception as e:
+        print(f"  ! 밤사이 한국증시 건너뜀 — {str(e)[:60]}")
 
     snapshot, flows = r["snapshot"], r["flows"]
     # 오늘 조회가 실패해 직전 스냅샷을 이어받았으면 화면에 알린다.

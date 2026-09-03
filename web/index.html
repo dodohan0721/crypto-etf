@@ -473,6 +473,26 @@ section{scroll-margin-top:112px}         /* 고정 머리말에 제목이 가려
     <p class="hint" id="home-kp" hidden></p>
   </section>
 
+  <!-- ── 밤사이 한국증시 ──────────────────── -->
+  <section id="night-sec" hidden>
+    <div class="sec-hd">
+      <div><h2>밤사이 한국증시</h2>
+        <p class="sub" id="night-sub"></p></div>
+    </div>
+    <div class="card">
+      <div class="sidx">
+        <div>
+          <div class="lbl" id="night-lbl">EWY · MSCI 한국 ETF</div>
+          <div class="big" id="night-px">—</div>
+          <div class="chg" id="night-chg"></div>
+        </div>
+        <div class="spk"><svg id="night-spk" viewBox="0 0 150 46" role="img"
+          aria-label="EWY 20일 추이"></svg></div>
+      </div>
+      <p class="hint" id="night-note"></p>
+    </div>
+  </section>
+
   <!-- ── ETF 한눈에 ───────────────────────── -->
   <section>
     <div class="sec-hd">
@@ -1034,7 +1054,7 @@ function drawHomeHot(counts) {
 // 숫자가 들어간 자리만 다시 그린다.
 // render() 를 다시 부르면 안내 띠가 겹겹이 쌓이고 resize 감시가 중복으로 붙는다.
 function paint() {
-  drawTicker(); drawHome(); drawFlow(); drawFundTop(); drawAum(); drawAumTs(); drawPct(); drawPrice(); drawTable(); drawFoot();
+  drawTicker(); drawHome(); drawFlow(); drawFundTop(); if (typeof drawNight === "function") drawNight(); drawAum(); drawAumTs(); drawPct(); drawPrice(); drawTable(); drawFoot();
 }
 
 // ── 시세 스트립 ───────────────────────────────────────
@@ -2651,8 +2671,8 @@ async function loadSpark(key) {
   return out;
 }
 
-function drawSpark(vals) {
-  const svg = $("#sec-spk"); if (!svg) return;
+function drawSpark(vals, sel) {
+  const svg = $(sel || "#sec-spk"); if (!svg) return;
   svg.innerHTML = "";
   if (!vals || vals.length < 2) return;
   const W = 150, H = 46, pad = 3;
@@ -2872,6 +2892,37 @@ function openSecSet() {
     if (ev.key === "Escape") { mask.remove(); removeEventListener("keydown", esc); }
   });
 }
+
+// ── 밤사이 한국증시 (EWY) ──────────────────────────────
+// 고객이 원한 건 코스피200 야간선물이었는데 그건 CME 상품이라 시세 이용료가 붙는다.
+// 뉴욕에 상장된 MSCI 한국 ETF 는 한국이 잠든 시간에 거래되고, 이미 쓰고 있는
+// 한투 해외주식 API 로 받으므로 돈이 더 들지 않는다. 대용 지표임을 화면에 밝힌다.
+let NIGHT = null;
+
+function drawNight() {
+  const sec = $("#night-sec"); if (!sec) return;
+  if (!NIGHT || !NIGHT.last) { sec.hidden = true; return; }
+  sec.hidden = false;
+  const up = NIGHT.rate >= 0;
+  $("#night-lbl").textContent = `${NIGHT.symbol} · ${NIGHT.name}`;
+  $("#night-px").textContent = price(NIGHT.last, 2);
+  const c = $("#night-chg");
+  c.textContent = `${up ? "▲" : "▼"} ${pct2(NIGHT.rate)}`
+    + (NIGHT.prev ? ` · 전일 ${price(NIGHT.prev, 2)}` : "");
+  c.style.color = `var(--${upcls(NIGHT.rate)})`;
+  drawSpark((NIGHT.history || []).map(r => r.close), "#night-spk");
+  $("#night-sub").textContent = `${NIGHT.source === "실시간" ? "미국장 실시간" : NIGHT.source}`
+    + ` · ${NIGHT.ts || ""}`;
+  $("#night-note").textContent =
+    "뉴욕에 상장된 한국 주식 ETF입니다. 한국 장이 닫힌 22:30~05:00(KST)에 거래되어, "
+    + "밤사이 해외에서 한국 증시를 어떻게 보고 있는지 가늠하는 지표로 씁니다. "
+    + "코스피200 야간선물 자체는 아닙니다.";
+}
+
+fetch("night.json", { cache: "no-store" })
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { NIGHT = d; drawNight(); })
+  .catch(() => {});          // 파일이 없으면 그 칸을 통째로 접는다
 
 // ── 김치프리미엄 ───────────────────────────────────────
 // 업비트 원화가 ÷ (달러가 × 환율) − 1.
