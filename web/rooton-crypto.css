@@ -1,0 +1,77 @@
+/* ROOTON crypto — shared materials, original ETF/coin/news functionality. */
+:root:has(body.rt-crypto){color-scheme:light;--surface-0:#f5f3ed;--surface-1:#fffefa;--surface-2:#f0ede4;--surface-3:#e6e2d7;--line:#ded9cc;--line-soft:#eee9df;--text-primary:#272c33;--text-secondary:#646e71;--text-muted:#78807e;--btc:#ab844c;--eth:#668dba;--up:#e4485c;--down:#3275d6;--grid:#e3e0d7;--sans:'DM Sans','IBM Plex Sans KR',system-ui,sans-serif;--mono:'DM Sans','IBM Plex Sans KR',system-ui,sans-serif;--shadow:var(--rt-shadow)}
+.rt-crypto header{border-bottom:1px solid #e5e0d4;background:#f8f7f1ed;backdrop-filter:blur(20px)}
+.rt-crypto .hd{max-width:1560px;padding:17px 28px;gap:18px}
+.rt-crypto .rt-brand{flex:none}
+.rt-crypto .hd-meta{font-family:inherit;font-size:10px;letter-spacing:0}
+.rt-crypto .nav{order:5;flex-basis:100%;gap:5px;border-top:1px solid #e7e2d6;padding:12px 0 0;margin:0}
+.rt-crypto .nav button{padding:8px 17px;font-size:12px;border-radius:25px;color:#6c726c;border:0;background:transparent}
+.rt-crypto .nav button[aria-pressed=true]{background:#e7e1d0;color:#60532e;box-shadow:inset 0 1px #fff}
+.rt-crypto .seg{background:#eae5d9;border:1px solid #e2dac8;padding:3px;border-radius:25px}
+.rt-crypto .seg button{font-size:11px;letter-spacing:0;font-family:inherit;border-radius:22px;padding:6px 13px;border:0}
+.rt-crypto .seg button[aria-pressed=true]{color:#5c4f30;background:#fffdf7;box-shadow:0 2px 5px #8f76381a}
+.rt-crypto .btn,.rt-crypto .who-hd button{font-family:inherit;border:1px solid #e4dac3;color:#685b38;background:#fffdf7;border-radius:23px;box-shadow:0 2px 4px #746b4610;padding:7px 13px}
+.rt-crypto .ticker{background:#f7f5ee; border-color:#e9e4d8}
+.rt-crypto .ticker-in{max-width:1560px;padding:0 28px;gap:29px}
+.rt-crypto .tk{padding:9px 0}.rt-crypto .tk .p{font-size:12px}.rt-crypto .tk b{font-size:11px}
+.rt-crypto .wrap{max-width:1560px;padding:22px 28px 60px}
+.rt-crypto h2{font-size:20px;letter-spacing:-.055em;font-weight:600}
+.rt-crypto .sub{font-size:11px;line-height:1.8}
+.rt-crypto section{margin-top:24px}
+.rt-crypto .card,.rt-crypto .tw{border:1px solid #ffffff;border-right-color:#e0dbcf;border-bottom-color:#d9d2c5;border-radius:21px;background:linear-gradient(125deg,#fffefa,#fbfaf5);box-shadow:var(--rt-shadow)}
+.rt-crypto .card{padding:22px}
+.rt-crypto th{font-family:inherit;font-weight:500;letter-spacing:0;font-size:11px;background:#f1efe7;padding:12px 15px}
+.rt-crypto td{padding:12px 15px;font-size:13px}.rt-crypto td.n{font-family:inherit;font-variant-numeric:tabular-nums}
+.rt-crypto .hero{font-family:inherit;font-size:38px;letter-spacing:-.065em;font-weight:550}
+.rt-crypto .lbl{font-family:inherit;letter-spacing:.02em;font-size:11px}
+.rt-crypto .tip{border-radius:13px;backdrop-filter:blur(16px);border-color:#fff;background:#fffdf3ed;box-shadow:0 8px 24px #2b353322}
+.rt-crypto .tip .d,.rt-crypto .tip .l b{font-family:inherit}
+.rt-crypto .chart svg path{stroke-linejoin:round;stroke-linecap:round}
+.rt-crypto .rt-hero{margin:0 0 22px}
+.rt-crypto .rt-crypto-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:27px}
+.rt-crypto .rt-metric{padding:20px 22px;min-width:0}
+.rt-crypto .rt-metric>span{display:block;color:#7a7b72;font-size:11px}
+.rt-crypto .rt-metric strong{display:block;font-size:25px;font-weight:550;letter-spacing:-.06em;margin:5px 0;white-space:nowrap}
+.rt-crypto .rt-metric small{font-size:10px;color:#85877f}
+.rt-crypto #view-home{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:0 23px}
+.rt-crypto #view-home .rt-hero,.rt-crypto #view-home .rt-crypto-metrics,.rt-crypto #view-home .rt-home-news,.rt-crypto #view-home #home-hot-sec{grid-column:1/-1}
+.rt-crypto #view-home .rt-home-prices{grid-column:1}
+.rt-crypto #view-home .rt-home-flow{grid-column:2}
+.rt-crypto #view-home #night-sec{grid-column:1/-1}
+.rt-crypto #view-home .rt-home-news .feed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 30px}
+.rt-crypto .stabs{gap:7px;margin-bottom:20px;align-items:center}
+.rt-crypto .stab,.rt-crypto .sgear{background:#fcfbf6;border:1px solid #e4dfd2;box-shadow:0 2px 5px #71684a0d;border-radius:18px;padding:10px 15px;font-size:12px}
+.rt-crypto .stab[aria-pressed=true]{background:#eae0c6;color:#5e5131;border-color:#c8b57e}
+.rt-crypto #rt-sector-grid{margin:0 0 25px}
+.rt-crypto .rt-sector-card{display:flex;flex-direction:column}
+.rt-crypto .rt-sector-card .rt-stock-row{cursor:default}
+.rt-crypto .rt-sector-card .rt-stock-row span:first-child{font-size:12px}
+.rt-crypto .rt-sector-card .rt-stock-row{grid-template-columns:minmax(0,1fr) 96px 65px}
+.rt-crypto .rt-sector-card .rt-card-more{margin-top:auto;padding-top:13px}
+.rt-crypto #sec-idx-card{background:radial-gradient(ellipse at 95% 0,#e8cf96c2,transparent 58%),radial-gradient(ellipse at 0 100%,#a9c3cc80,transparent 65%),linear-gradient(120deg,#495563,#6f8390,#9d9380);color:#fffdf5;border-radius:25px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:12px 25px;padding:27px;margin-top:22px;box-shadow:0 16px 32px -22px #364c64a0,inset 0 1px #ffffffb3}
+.rt-crypto #sec-idx-card[hidden]{display:none!important}
+.rt-crypto #sec-idx-card .sidx{display:flex;align-items:center}
+.rt-crypto #sec-idx-card .big{font-size:42px;font-weight:550}
+.rt-crypto #sec-idx-card .lbl,.rt-crypto #sec-idx-card .hint{color:#e7e9e2}
+.rt-crypto #sec-idx-card .hint{grid-column:1/-1}
+.rt-crypto #sec-idx-card .spk{display:none}
+.rt-crypto .crow{padding:14px 0;gap:14px}.rt-crypto .crow .nm2{font-weight:550;font-size:14px}
+.rt-crypto .crow .pr{font-size:14px}.rt-crypto .crow .sy,.rt-crypto .crow .vl{font-size:11px}
+.rt-crypto .ft{border-radius:20px;background:#ede9df}
+.rt-crypto .ft i{border-radius:20px;background-image:linear-gradient(90deg,#ffffff55,transparent)!important;box-shadow:inset 0 1px #ffffff70}
+.rt-crypto .frank{padding:11px 0}.rt-crypto .ls{height:11px;border-radius:10px;box-shadow:inset 0 1px #fff}
+.rt-crypto .ls i{background-image:linear-gradient(0deg,#ffffff00,#ffffff60);border-top:1px solid #ffffff60}
+.rt-crypto .ni{padding:17px 0}
+.rt-crypto .ni .title{font-size:14px;line-height:1.7}
+.rt-crypto .feed .ni+.ni{border-color:#ebe6da}
+.rt-crypto .ssheet,.rt-crypto dialog{background:#faf7ef;border-radius:24px;border:1px solid #fff;box-shadow:0 20px 60px #353a3930}
+.rt-crypto .hint,.rt-crypto footer{line-height:1.8}
+.rt-crypto footer{font-size:11px;margin-top:30px}
+.rt-crypto .rt-sector-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 18px}
+@media(max-width:1050px){.rt-crypto .rt-brand-nav{margin:0 auto 0 0;gap:18px}.rt-crypto .rt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rt-crypto #view-home{grid-template-columns:minmax(0,1fr) minmax(270px,.8fr)}.rt-crypto .rt-metric{padding:18px}.rt-crypto .rt-metric strong{font-size:23px}.rt-crypto .hd-meta{order:4}.rt-crypto #sec-idx-card{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:700px){.rt-crypto .hd{padding:15px 17px 10px;gap:12px}.rt-crypto .rt-brand-nav{order:3;flex-basis:100%;justify-content:flex-start;gap:25px}.rt-crypto .hd-meta{order:4;flex:1}.rt-crypto .rt-brand{margin-right:auto}.rt-crypto .who-hd{margin:0}.rt-crypto .nav{overflow-x:auto;flex-wrap:nowrap;padding-top:9px;gap:3px}.rt-crypto .nav button{padding:7px 13px;white-space:nowrap}.rt-crypto .ticker-in{padding:0 17px;gap:22px}.rt-crypto .wrap{padding:18px 16px 45px}.rt-crypto #view-home{display:block}.rt-crypto .rt-crypto-metrics{grid-template-columns:1fr;gap:11px;margin-bottom:20px}.rt-crypto .rt-metric{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:16px 19px}.rt-crypto .rt-metric small{grid-column:1/-1}.rt-crypto .rt-metric strong{font-size:23px;margin:0}.rt-crypto .rt-grid{grid-template-columns:1fr;gap:16px}.rt-crypto #view-home .rt-home-news .feed{display:block}.rt-crypto h2{font-size:19px}.rt-crypto #sec-idx-card{grid-template-columns:1fr;padding:23px 19px}.rt-crypto #sec-idx-card .big{font-size:35px}.rt-crypto .card{padding:19px}.rt-crypto .stabs{flex-wrap:nowrap;overflow-x:auto;padding:4px 0 9px}.rt-crypto .stab{flex:none}.rt-crypto .rt-sector-card .rt-stock-row{grid-template-columns:minmax(0,1fr) 99px 70px}.rt-crypto .rt-sector-tools{flex-wrap:wrap}.rt-crypto .rt-hero .rt-number{font-size:36px}.rt-crypto .rt-hero{margin-top:0}}
+
+.rt-crypto .hidden{display:none!important}
+
+.rt-crypto #sec-idx-card .sidx{grid-column:1;grid-row:1}.rt-crypto #sec-idx-card .hint{grid-column:1;grid-row:2;align-self:start}.rt-crypto #rt-sector-chart{grid-column:2;grid-row:1 / span 2}
+@media(max-width:700px){.rt-crypto #rt-sector-chart{grid-column:1;grid-row:3}.rt-crypto #sec-idx-card .hint{grid-column:1;grid-row:2}}
